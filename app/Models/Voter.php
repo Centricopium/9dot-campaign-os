@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Voter extends Model
 {
     protected $fillable = [
-        'booth_id',
+        'house_id',
         'serial_no',
         'epic_no',
         'name',
@@ -29,8 +29,8 @@ class Voter extends Model
         'remarks',
     ];
 
-    public function booth()
+    public function house()
     {
-        return $this->belongsTo(Booth::class);
+        return $this->belongsTo(House::class);
     }
 }

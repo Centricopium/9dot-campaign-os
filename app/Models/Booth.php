@@ -32,4 +32,9 @@ class Booth extends Model
     {
         return $this->hasMany(Voter::class);
     }
+    public function houses()
+    {
+        return $this->hasMany(House::class);
+    }
+    
 }
