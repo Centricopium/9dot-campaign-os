@@ -11,6 +11,7 @@ class Voter extends Model
         'house_id',
 
         'serial_no',
+        'part_no',
         'epic_no',
 
         'name',
@@ -22,19 +23,28 @@ class Voter extends Model
 
         'mobile',
         'whatsapp',
+        'email',
 
         'house_no',
         'address',
 
+        'photo',
+
         'caste',
+        'category',
         'religion',
         'occupation',
         'education',
 
         'support_level',
         'party_support',
+        'party_preference',
 
         'is_influencer',
+        'is_volunteer',
+
+        'last_contact_date',
+
         'remarks',
 
         'is_active',
@@ -44,7 +54,10 @@ class Voter extends Model
     protected $casts = [
 
         'dob' => 'date',
+        'last_contact_date' => 'date',
+
         'is_influencer' => 'boolean',
+        'is_volunteer' => 'boolean',
         'is_active' => 'boolean',
 
     ];
@@ -65,10 +78,10 @@ class Voter extends Model
         return $this->hasOneThrough(
             Booth::class,
             House::class,
-            'id',        // House.id
-            'id',        // Booth.id
-            'house_id',  // voters.house_id
-            'booth_id'   // houses.booth_id
+            'id',
+            'id',
+            'house_id',
+            'booth_id'
         );
     }
 
@@ -82,5 +95,45 @@ class Voter extends Model
             'house_id',
             'village_id'
         );
+    }
+
+    public function constituency()
+    {
+        return $this->hasOneThrough(
+            Constituency::class,
+            House::class,
+            'id',
+            'id',
+            'house_id',
+            'constituency_id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    public function getDisplayNameAttribute(): string
+    {
+        return "{$this->name} ({$this->epic_no})";
+    }
+
+    public function getSupportBadgeColorAttribute(): string
+    {
+        return match ($this->support_level) {
+
+            'Strong Congress' => 'success',
+            'Congress Leaning' => 'info',
+
+            'Neutral' => 'gray',
+            'Undecided' => 'warning',
+
+            'BJP Leaning' => 'danger',
+            'Strong BJP' => 'danger',
+
+            default => 'secondary',
+        };
     }
 }
