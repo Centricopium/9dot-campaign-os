@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
 
 class HousesTable
 {
@@ -58,8 +59,9 @@ class HousesTable
             ])
 
             ->recordActions([
-                EditAction::make(),
-            ])
+    ViewAction::make(),
+    EditAction::make(),
+])
 
             ->toolbarActions([
                 BulkActionGroup::make([

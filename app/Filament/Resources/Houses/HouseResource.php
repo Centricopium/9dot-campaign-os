@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Filament\Resources\Houses;
-
+use App\Filament\Resources\Houses\Pages\ViewHouse;
+use App\Filament\Resources\Houses\Schemas\HouseInfolist;
 use App\Filament\Resources\Houses\Pages\CreateHouse;
 use App\Filament\Resources\Houses\Pages\EditHouse;
 use App\Filament\Resources\Houses\Pages\ListHouses;
@@ -29,7 +30,10 @@ class HouseResource extends Resource
     {
         return HouseForm::configure($schema);
     }
-
+    public static function infolist(Schema $schema): Schema
+    {
+    return HouseInfolist::configure($schema);
+    }
     public static function table(Table $table): Table
     {
         return HousesTable::configure($table);
@@ -43,11 +47,12 @@ class HouseResource extends Resource
     }
 
     public static function getPages(): array
-    {
-        return [
-            'index' => ListHouses::route('/'),
-            'create' => CreateHouse::route('/create'),
-            'edit' => EditHouse::route('/{record}/edit'),
-        ];
-    }
+{
+    return [
+        'index' => ListHouses::route('/'),
+        'create' => CreateHouse::route('/create'),
+        'view' => ViewHouse::route('/{record}'),
+        'edit' => EditHouse::route('/{record}/edit'),
+    ];
+}
 }
