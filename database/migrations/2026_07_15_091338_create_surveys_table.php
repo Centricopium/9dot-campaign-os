@@ -14,6 +14,17 @@ return new class extends Migration
 
             $table->string('name');
 
+            $table->string('code')->unique();
+
+            $table->enum('type', [
+                'Door to Door',
+                'Membership',
+                'Issue',
+                'Feedback',
+                'Exit Poll',
+                'Custom',
+            ])->default('Custom');
+
             $table->text('description')->nullable();
 
             $table->enum('status', [

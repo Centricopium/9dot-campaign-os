@@ -11,13 +11,13 @@ class SurveyQuestion extends Model
         'question',
         'type',
         'options',
-        'required',
+        'is_required',
         'sort_order',
     ];
 
     protected $casts = [
         'options' => 'array',
-        'required' => 'boolean',
+        'is_required' => 'boolean',
     ];
 
     public function survey()
