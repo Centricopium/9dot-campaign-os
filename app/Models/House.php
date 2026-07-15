@@ -14,8 +14,20 @@ class House extends Model
         'address',
         'gps_latitude',
         'gps_longitude',
+        'is_verified',
         'is_active',
     ];
+
+    protected $casts = [
+        'is_verified' => 'boolean',
+        'is_active' => 'boolean',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
     public function booth()
     {
@@ -25,5 +37,25 @@ class House extends Model
     public function voters()
     {
         return $this->hasMany(Voter::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTotalVotersAttribute()
+    {
+        return $this->voters()->count();
+    }
+
+    public function getActiveVotersAttribute()
+    {
+        return $this->voters()->where('is_active', true)->count();
+    }
+    public function getDisplayNameAttribute(): string
+    {
+        return "{$this->house_no} - {$this->head_of_family}";
     }
 }

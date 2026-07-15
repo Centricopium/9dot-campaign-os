@@ -3,19 +3,17 @@
 namespace App\Filament\Resources\Voters\Pages;
 
 use App\Filament\Resources\Voters\VoterResource;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ViewRecord;
 
-class EditVoter extends EditRecord
+class ViewVoter extends ViewRecord
 {
     protected static string $resource = VoterResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
-            DeleteAction::make(),
+            EditAction::make(),
         ];
     }
 }

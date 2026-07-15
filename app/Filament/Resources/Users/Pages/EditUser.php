@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Voters\Pages;
+namespace App\Filament\Resources\Users\Pages;
 
-use App\Filament\Resources\Voters\VoterResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditVoter extends EditRecord
+class EditUser extends EditRecord
 {
-    protected static string $resource = VoterResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {

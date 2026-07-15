@@ -16,7 +16,6 @@ class Voter extends Model
 
         'name',
         'father_husband_name',
-
         'gender',
         'age',
         'dob',
@@ -27,12 +26,11 @@ class Voter extends Model
 
         'house_no',
         'address',
-
         'photo',
 
         'caste',
-        'category',
         'religion',
+        'category',
         'occupation',
         'education',
 
@@ -45,21 +43,48 @@ class Voter extends Model
 
         'last_contact_date',
 
+        'voter_type',
+        'blood_group',
+
+        'disability',
+
+        'government_scheme',
+        'government_scheme_name',
+
+        'facebook',
+        'instagram',
+        'twitter',
+
+        'family_members',
+
+        'booth_committee_role',
+        'panna_pramukh',
+        'polling_agent',
+
+        'priority',
+        'next_followup',
+
+        'latitude',
+        'longitude',
+
+        'internal_notes',
+
         'remarks',
 
         'is_active',
-
     ];
 
     protected $casts = [
 
         'dob' => 'date',
         'last_contact_date' => 'date',
+        'next_followup' => 'date',
 
         'is_influencer' => 'boolean',
         'is_volunteer' => 'boolean',
+        'disability' => 'boolean',
+        'government_scheme' => 'boolean',
         'is_active' => 'boolean',
-
     ];
 
     /*
@@ -111,7 +136,7 @@ class Voter extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Helpers
+    | Accessors
     |--------------------------------------------------------------------------
     */
 
@@ -125,15 +150,18 @@ class Voter extends Model
         return match ($this->support_level) {
 
             'Strong Congress' => 'success',
+
             'Congress Leaning' => 'info',
 
             'Neutral' => 'gray',
+
             'Undecided' => 'warning',
 
             'BJP Leaning' => 'danger',
+
             'Strong BJP' => 'danger',
 
-            default => 'secondary',
+            default => 'gray',
         };
     }
 }

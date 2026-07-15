@@ -15,40 +15,52 @@ class HousesTable
     {
         return $table
             ->columns([
-                TextColumn::make('booth_id')
-                    ->numeric()
+
+                TextColumn::make('booth.booth_name')
+                    ->label('Booth')
+                    ->searchable()
                     ->sortable(),
+
                 TextColumn::make('house_no')
-                    ->searchable(),
+                    ->label('House No')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('head_of_family')
+                    ->label('Head of Family')
                     ->searchable(),
+
                 TextColumn::make('mobile')
                     ->searchable(),
-                TextColumn::make('gps_latitude')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('gps_longitude')
-                    ->numeric()
-                    ->sortable(),
+
+                TextColumn::make('voters_count')
+                    ->label('Family Members')
+                    ->counts('voters')
+                    ->badge()
+                    ->color('primary'),
+
                 IconColumn::make('is_verified')
+                    ->label('Verified')
                     ->boolean(),
+
                 IconColumn::make('is_active')
+                    ->label('Active')
                     ->boolean(),
+
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->date()
+                    ->sortable(),
+
             ])
+
             ->filters([
-                //
+
             ])
+
             ->recordActions([
                 EditAction::make(),
             ])
+
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
