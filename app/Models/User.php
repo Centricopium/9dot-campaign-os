@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\Constituency;
 use App\Models\Village;
 use App\Models\Booth;
+
 
 #[Fillable([
     'name',
@@ -66,5 +66,13 @@ public function village()
 public function booth()
 {
     return $this->belongsTo(Booth::class);
+}
+public function getProfilePhotoUrlAttribute(): ?string
+{
+    if (! $this->profile_photo) {
+        return null;
+    }
+
+    return asset('storage/' . $this->profile_photo);
 }
 }

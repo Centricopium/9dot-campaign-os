@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Village extends Model
 {
@@ -29,6 +30,10 @@ class Village extends Model
     public function booths()
     {
         return $this->hasMany(Booth::class);
+    }
+    public function users()
+    {
+        return $this->hasMany(User::class);
     }
    
 }
