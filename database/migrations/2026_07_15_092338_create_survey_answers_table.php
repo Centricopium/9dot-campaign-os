@@ -6,21 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('survey_answers', function (Blueprint $table) {
 
             $table->id();
 
-            $table->foreignId('survey_response_id')
-                ->constrained()
+            $table->foreignId('response_id')
+                ->constrained('survey_responses')
                 ->cascadeOnDelete();
 
-            $table->foreignId('survey_question_id')
-                ->constrained()
+            $table->foreignId('question_id')
+                ->constrained('survey_questions')
                 ->cascadeOnDelete();
 
             $table->longText('answer')->nullable();
@@ -30,9 +27,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('survey_answers');

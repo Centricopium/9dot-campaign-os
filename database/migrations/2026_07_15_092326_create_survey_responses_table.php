@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('survey_responses', function (Blueprint $table) {
@@ -18,6 +15,11 @@ return new class extends Migration
             $table->foreignId('survey_id')
                 ->constrained()
                 ->cascadeOnDelete();
+
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->foreignId('voter_id')
                 ->nullable()
@@ -29,21 +31,16 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->foreignId('user_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->decimal('latitude', 10, 7)->nullable();
+
+            $table->decimal('longitude', 10, 7)->nullable();
 
             $table->timestamp('submitted_at')->nullable();
 
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('survey_responses');

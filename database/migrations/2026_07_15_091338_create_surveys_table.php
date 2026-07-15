@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('surveys', function (Blueprint $table) {
@@ -17,29 +14,27 @@ return new class extends Migration
 
             $table->string('name');
 
-            $table->string('code')->unique();
-
             $table->text('description')->nullable();
 
-            $table->enum('type', [
-                'Door to Door',
-                'Membership',
-                'Issue',
-                'Election',
-                'Government Scheme',
-                'Custom',
-            ])->default('Door to Door');
+            $table->enum('status', [
+                'Draft',
+                'Active',
+                'Closed',
+            ])->default('Draft');
 
-            $table->boolean('is_active')->default(true);
+            $table->date('start_date')->nullable();
+
+            $table->date('end_date')->nullable();
+
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('surveys');

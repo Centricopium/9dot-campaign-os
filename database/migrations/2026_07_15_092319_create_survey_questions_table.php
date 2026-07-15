@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('survey_questions', function (Blueprint $table) {
@@ -19,34 +16,30 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('question');
+            $table->text('question');
 
-            $table->string('field_name');
-
-            $table->enum('field_type', [
+            $table->enum('type', [
                 'text',
                 'textarea',
                 'number',
-                'date',
                 'dropdown',
                 'radio',
                 'checkbox',
-                'yes_no',
+                'date',
                 'rating',
+                'yes_no',
             ]);
+
+            $table->json('options')->nullable();
 
             $table->boolean('required')->default(false);
 
-            $table->integer('sort_order')->default(0);
+            $table->integer('sort_order')->default(1);
 
             $table->timestamps();
-
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('survey_questions');

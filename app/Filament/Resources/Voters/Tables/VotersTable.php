@@ -65,15 +65,47 @@ class VotersTable
 
 ])
             ->filters([
-                //
-            ])
+
+    \Filament\Tables\Filters\SelectFilter::make('gender')
+        ->options([
+            'Male' => 'Male',
+            'Female' => 'Female',
+            'Other' => 'Other',
+        ]),
+
+    \Filament\Tables\Filters\SelectFilter::make('support_level')
+        ->options([
+            'Strong Congress' => 'Strong Congress',
+            'Congress Leaning' => 'Congress Leaning',
+            'Neutral' => 'Neutral',
+            'Undecided' => 'Undecided',
+            'BJP Leaning' => 'BJP Leaning',
+            'Strong BJP' => 'Strong BJP',
+            'Other' => 'Other',
+        ]),
+
+    \Filament\Tables\Filters\TernaryFilter::make('is_volunteer')
+        ->label('Volunteer'),
+
+    \Filament\Tables\Filters\TernaryFilter::make('is_active')
+        ->label('Active'),
+
+])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+
+              ViewAction::make(),
+            EditAction::make(),
+
+            \Filament\Actions\DeleteAction::make(),
+
             ])
+            
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    \Filament\Actions\ForceDeleteBulkAction::make(),
+
+                    \Filament\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
