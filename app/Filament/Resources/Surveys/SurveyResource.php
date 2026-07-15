@@ -11,13 +11,18 @@ use App\Filament\Resources\Surveys\Schemas\SurveyInfolist;
 use App\Filament\Resources\Surveys\Tables\SurveysTable;
 use App\Models\Survey;
 use BackedEnum;
+use UnitEnum;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class SurveyResource extends Resource
+
 {
+    protected static string|UnitEnum|null $navigationGroup = 'Masters';
+    protected static ?int $navigationSort = 1;
     protected static ?string $model = Survey::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

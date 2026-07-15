@@ -21,6 +21,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
+    protected static ?int $sort = 1;
     public function panel(Panel $panel): Panel
     {
         return $panel

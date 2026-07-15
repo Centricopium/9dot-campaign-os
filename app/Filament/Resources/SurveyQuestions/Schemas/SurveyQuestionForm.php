@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\SurveyQuestions\Schemas;
 
-use App\Models\Survey;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -31,32 +30,35 @@ class SurveyQuestionForm
 
                         Textarea::make('question')
                             ->label('Question')
-                            ->required()
                             ->rows(3)
+                            ->required()
                             ->columnSpanFull(),
 
                         Grid::make(3)
                             ->schema([
 
                                 Select::make('type')
+                                    ->label('Question Type')
                                     ->required()
+                                    ->live()
                                     ->options([
-                                        'text' => 'Text',
-                                        'textarea' => 'Long Text',
-                                        'number' => 'Number',
-                                        'dropdown' => 'Dropdown',
-                                        'radio' => 'Radio Button',
-                                        'checkbox' => 'Checkbox',
-                                        'yes_no' => 'Yes / No',
-                                        'rating' => 'Rating',
-                                        'date' => 'Date',
-                                    ])
-                                    ->live(),
+                                        'text' => '📝 Short Text',
+                                        'textarea' => '📄 Long Text',
+                                        'number' => '🔢 Number',
+                                        'date' => '📅 Date',
+                                        'yes_no' => '✅ Yes / No',
+                                        'radio' => '🔘 Radio Button',
+                                        'checkbox' => '☑ Checkbox',
+                                        'dropdown' => '📋 Dropdown',
+                                        'rating' => '⭐ Rating',
+                                    ]),
 
-                                Toggle::make('required')
+                                Toggle::make('is_required')
+                                    ->label('Required')
                                     ->default(false),
 
                                 TextInput::make('sort_order')
+                                    ->label('Display Order')
                                     ->numeric()
                                     ->default(1),
 
@@ -64,23 +66,26 @@ class SurveyQuestionForm
 
                     ]),
 
-                Section::make('Options')
+                Section::make('Answer Options')
                     ->schema([
 
                         Repeater::make('options')
                             ->schema([
 
                                 TextInput::make('value')
+                                    ->label('Option')
                                     ->required(),
 
                             ])
-                            ->visible(fn ($get) => in_array($get('type'), [
-                                'dropdown',
-                                'radio',
-                                'checkbox',
-                            ]))
                             ->defaultItems(2)
-                            ->columnSpanFull(),
+                            ->visible(fn ($get) => in_array(
+                                $get('type'),
+                                [
+                                    'radio',
+                                    'checkbox',
+                                    'dropdown',
+                                ]
+                            )),
 
                     ]),
 

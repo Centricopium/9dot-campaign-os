@@ -9,6 +9,8 @@ use App\Filament\Resources\SurveyQuestions\Schemas\SurveyQuestionForm;
 use App\Filament\Resources\SurveyQuestions\Tables\SurveyQuestionsTable;
 use App\Models\SurveyQuestion;
 use BackedEnum;
+use UnitEnum;
+
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -16,6 +18,8 @@ use Filament\Tables\Table;
 
 class SurveyQuestionResource extends Resource
 {
+    protected static string|UnitEnum|null $navigationGroup = 'Masters';
+    protected static ?int $navigationSort = 2;
     protected static ?string $model = SurveyQuestion::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

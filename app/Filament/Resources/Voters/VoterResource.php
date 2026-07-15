@@ -20,6 +20,7 @@ use UnitEnum;
 
 class VoterResource extends Resource
 {
+   
     protected static ?string $model = Voter::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
