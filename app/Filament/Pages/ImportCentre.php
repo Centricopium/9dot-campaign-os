@@ -20,4 +20,14 @@ class ImportCentre extends Page
     protected static ?string $title = 'Import Centre';
 
     protected static ?int $navigationSort = 1;
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->canAny([
+            'import.village',
+            'import.booth',
+            'import.house',
+            'import.voter',
+        ]) ?? false;
+    }
 }
