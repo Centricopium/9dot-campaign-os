@@ -15,8 +15,11 @@ class Voter extends Model
         'epic_no',
 
         'name',
+        'surname',
         'father_husband_name',
+        'relation_type',
         'gender',
+
         'age',
         'dob',
 
@@ -35,7 +38,7 @@ class Voter extends Model
         'education',
 
         'support_level',
-        'party_support',
+        'political_party_id',
         'party_preference',
 
         'is_influencer',
@@ -98,6 +101,11 @@ class Voter extends Model
         return $this->belongsTo(House::class);
     }
 
+    public function politicalParty()
+    {
+        return $this->belongsTo(PoliticalParty::class);
+    }
+
     public function booth()
     {
         return $this->hasOneThrough(
@@ -149,17 +157,19 @@ class Voter extends Model
     {
         return match ($this->support_level) {
 
-            'Strong Congress' => 'success',
+            'Strong Support' => 'success',
 
-            'Congress Leaning' => 'info',
+            'Support' => 'success',
+
+            'Leaning' => 'info',
 
             'Neutral' => 'gray',
 
+            'Opposition Leaning' => 'warning',
+
+            'Strong Opposition' => 'danger',
+
             'Undecided' => 'warning',
-
-            'BJP Leaning' => 'danger',
-
-            'Strong BJP' => 'danger',
 
             default => 'gray',
         };

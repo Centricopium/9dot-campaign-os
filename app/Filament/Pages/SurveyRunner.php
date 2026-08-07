@@ -5,12 +5,12 @@ namespace App\Filament\Pages;
 use App\Models\House;
 use App\Models\Survey;
 use App\Models\Voter;
+use App\Services\SurveyService;
 use BackedEnum;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
-use App\Models\SurveyResponse;
-use App\Models\SurveyAnswer;
 
 class SurveyRunner extends Page
 {
@@ -54,7 +54,6 @@ class SurveyRunner extends Page
             $this->voters = [];
         }
 
-        // Reset previous survey state
         $this->selectedVoter = null;
         $this->questions = [];
         $this->answers = [];
@@ -63,6 +62,12 @@ class SurveyRunner extends Page
     public function startSurvey(int $voterId): void
     {
         if (! $this->surveyId) {
+
+            Notification::make()
+                ->title('Please select a survey first.')
+                ->warning()
+                ->send();
+
             return;
         }
 
@@ -75,37 +80,38 @@ class SurveyRunner extends Page
         $this->answers = [];
     }
 
+    public function saveSurvey(SurveyService $service): void
+    {
+        if (! $this->selectedVoter || ! $this->surveyId) {
+
+            Notification::make()
+                ->title('Please select Survey and Voter.')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $service->save(
+            surveyId: $this->surveyId,
+            voterId: $this->selectedVoter->id,
+            houseId: $this->selectedVoter->house_id,
+            userId: auth()->id(),
+            answers: $this->answers,
+        );
+
+        Notification::make()
+            ->title('Survey Saved Successfully')
+            ->success()
+            ->send();
+
+        $this->selectedVoter = null;
+        $this->questions = [];
+        $this->answers = [];
+    }
+
     public function getSurveysProperty()
     {
         return Survey::orderBy('name')->get();
     }
-    public function saveSurvey()
-    {
-        if (!$this->selectedVoter || !$this->surveyId) {
-            return;
-    }
-
-    $response = SurveyResponse::create([
-        'survey_id' => $this->surveyId,
-        'voter_id' => $this->selectedVoter->id,
-        'house_id' => $this->selectedVoter->house_id,
-        'submitted_by' => auth()->id(),
-    ]);
-
-    foreach ($this->answers as $questionId => $answer) {
-
-        SurveyAnswer::create([
-            'survey_response_id' => $response->id,
-            'question_id' => $questionId,
-            'answer' => $answer,
-        ]);
-
-    }
-
-    $this->dispatch('notify', 'Survey Saved Successfully.');
-
-    $this->selectedVoter = null;
-    $this->questions = [];
-    $this->answers = [];
-}
 }

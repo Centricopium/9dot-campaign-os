@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources\SurveyQuestions\Schemas;
 
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class SurveyQuestionForm
@@ -17,78 +14,55 @@ class SurveyQuestionForm
     {
         return $schema
             ->components([
+                Select::make('survey_id')
+    ->relationship('survey', 'name')
+    ->searchable()
+    ->preload()
+    ->required()
+    ->hiddenOn(
+        \App\Filament\Resources\Surveys\RelationManagers\QuestionsRelationManager::class
+    ),
 
-                Section::make('Question Details')
-                    ->schema([
+                Textarea::make('question')
+                    ->label('Question')
+                    ->required()
+                    ->rows(3)
+                    ->columnSpanFull(),
 
-                        Select::make('survey_id')
-                            ->label('Survey')
-                            ->relationship('survey', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                Select::make('type')
+                    ->options([
+                        'text' => 'Text',
+                        'textarea' => 'Textarea',
+                        'number' => 'Number',
+                        'radio' => 'Radio',
+                        'checkbox' => 'Checkbox',
+                        'select' => 'Dropdown',
+                        'rating' => 'Rating',
+                        'yes_no' => 'Yes / No',
+                        'date' => 'Date',
+                    ])
+                    ->searchable()
+                    ->live()
+                    ->required(),
 
-                        Textarea::make('question')
-                            ->label('Question')
-                            ->rows(3)
-                            ->required()
-                            ->columnSpanFull(),
+                Textarea::make('options')
+                    ->label('Options')
+                    ->helperText('Enter one option per line.')
+                    ->rows(5)
+                    ->visible(fn ($get) => in_array($get('type'), [
+                        'radio',
+                        'checkbox',
+                        'select',
+                    ]))
+                    ->columnSpanFull(),
 
-                        Grid::make(3)
-                            ->schema([
+                Toggle::make('required')
+                    ->default(true),
 
-                                Select::make('type')
-                                    ->label('Question Type')
-                                    ->required()
-                                    ->live()
-                                    ->options([
-                                        'text' => '📝 Short Text',
-                                        'textarea' => '📄 Long Text',
-                                        'number' => '🔢 Number',
-                                        'date' => '📅 Date',
-                                        'yes_no' => '✅ Yes / No',
-                                        'radio' => '🔘 Radio Button',
-                                        'checkbox' => '☑ Checkbox',
-                                        'dropdown' => '📋 Dropdown',
-                                        'rating' => '⭐ Rating',
-                                    ]),
-
-                                Toggle::make('is_required')
-                                    ->label('Required')
-                                    ->default(false),
-
-                                TextInput::make('sort_order')
-                                    ->label('Display Order')
-                                    ->numeric()
-                                    ->default(1),
-
-                            ]),
-
-                    ]),
-
-                Section::make('Answer Options')
-                    ->schema([
-
-                        Repeater::make('options')
-                            ->schema([
-
-                                TextInput::make('value')
-                                    ->label('Option')
-                                    ->required(),
-
-                            ])
-                            ->defaultItems(2)
-                            ->visible(fn ($get) => in_array(
-                                $get('type'),
-                                [
-                                    'radio',
-                                    'checkbox',
-                                    'dropdown',
-                                ]
-                            )),
-
-                    ]),
-
+                TextInput::make('sort_order')
+                    ->numeric()
+                    ->default(1)
+                    ->required(),
             ]);
     }
 }

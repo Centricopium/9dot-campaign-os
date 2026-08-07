@@ -5,10 +5,10 @@ namespace App\Filament\Resources\Houses\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Actions\ViewAction;
 
 class HousesTable
 {
@@ -16,6 +16,12 @@ class HousesTable
     {
         return $table
             ->columns([
+
+                TextColumn::make('booth.village.village_name')
+                    ->label('Village')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('booth.booth_name')
                     ->label('Booth')
@@ -32,13 +38,16 @@ class HousesTable
                     ->searchable(),
 
                 TextColumn::make('mobile')
-                    ->searchable(),
+                    ->label('Mobile')
+                    ->searchable()
+                    ->placeholder('-'),
 
                 TextColumn::make('voters_count')
                     ->label('Family Members')
                     ->counts('voters')
                     ->badge()
-                    ->color('primary'),
+                    ->color('primary')
+                    ->sortable(),
 
                 IconColumn::make('is_verified')
                     ->label('Verified')
@@ -49,8 +58,10 @@ class HousesTable
                     ->boolean(),
 
                 TextColumn::make('created_at')
-                    ->date()
-                    ->sortable(),
+                    ->label('Created')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
             ])
 
@@ -59,9 +70,9 @@ class HousesTable
             ])
 
             ->recordActions([
-    ViewAction::make(),
-    EditAction::make(),
-])
+                ViewAction::make(),
+                EditAction::make(),
+            ])
 
             ->toolbarActions([
                 BulkActionGroup::make([

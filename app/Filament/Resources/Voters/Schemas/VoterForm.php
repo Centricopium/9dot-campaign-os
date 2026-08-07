@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\Voters\Schemas;
 
-use App\Models\House;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -25,22 +23,37 @@ class VoterForm
                     ->description('Election Commission Details')
                     ->schema([
 
-                        Select::make('house_id')
-                            ->relationship('house', 'house_no')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                       Select::make('house_id')
+    ->label('House')
+    ->relationship(
+        name: 'house',
+        titleAttribute: 'house_no',
+    )
+    ->getOptionLabelFromRecordUsing(
+        fn (\App\Models\House $record): string => "{$record->house_no} - {$record->head_of_family}"
+    )
+    ->searchable()
+    ->preload()
+    ->required()
+    ->hiddenOn(\App\Filament\Resources\Houses\RelationManagers\VotersRelationManager::class),
 
                         Grid::make(3)
                             ->schema([
 
                                 TextInput::make('part_no')
-                                    ->required(),
+                                    ->label('Part No')
+                                    ->required()
+                                    ->maxLength(20),
 
                                 TextInput::make('serial_no')
-                                    ->required(),
+                                    ->label('Serial No')
+                                    ->required()
+                                    ->maxLength(20),
 
                                 TextInput::make('epic_no')
+                                    ->label('EPIC No')
+                                    ->maxLength(20)
+                                    ->dehydrateStateUsing(fn (?string $state): ?string => $state ? strtoupper($state) : null)
                                     ->unique(ignoreRecord: true),
 
                             ]),
@@ -54,9 +67,12 @@ class VoterForm
                             ->schema([
 
                                 TextInput::make('name')
-                                    ->required(),
+                                    ->required()
+                                    ->maxLength(150),
 
-                                TextInput::make('father_husband_name'),
+                                TextInput::make('father_husband_name')
+                                    ->label('Father / Husband Name')
+                                    ->maxLength(150),
 
                                 Select::make('gender')
                                     ->options([
@@ -66,7 +82,9 @@ class VoterForm
                                     ]),
 
                                 TextInput::make('age')
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->minValue(18)
+                                    ->maxValue(120),
 
                                 DatePicker::make('dob'),
 
@@ -78,7 +96,8 @@ class VoterForm
                             ]),
 
                     ]),
-                                    Section::make('Contact Information')
+
+                Section::make('Contact Information')
                     ->schema([
 
                         Grid::make(3)
@@ -86,10 +105,12 @@ class VoterForm
 
                                 TextInput::make('mobile')
                                     ->tel()
+                                    ->minLength(10)
                                     ->maxLength(15),
 
                                 TextInput::make('whatsapp')
                                     ->tel()
+                                    ->minLength(10)
                                     ->maxLength(15),
 
                                 TextInput::make('email')
@@ -124,11 +145,14 @@ class VoterForm
 
                                 TextInput::make('category'),
 
-                                TextInput::make('occupation'),
+                                TextInput::make('occupation')
+                                    ->maxLength(150),
 
-                                TextInput::make('education'),
+                                TextInput::make('education')
+                                    ->maxLength(150),
 
-                                TextInput::make('blood_group'),
+                                TextInput::make('blood_group')
+                                    ->maxLength(10),
 
                             ]),
 
@@ -140,21 +164,30 @@ class VoterForm
                         Grid::make(2)
                             ->schema([
 
+                                Select::make('political_party_id')
+                                    ->label('Political Party')
+                                    ->relationship('politicalParty', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->placeholder('Select Political Party'),
+
                                 Select::make('support_level')
+                                    ->label('Support Level')
                                     ->options([
-                                        'Strong Congress' => 'Strong Congress',
-                                        'Congress Leaning' => 'Congress Leaning',
-                                        'Neutral' => 'Neutral',
-                                        'Undecided' => 'Undecided',
-                                        'BJP Leaning' => 'BJP Leaning',
-                                        'Strong BJP' => 'Strong BJP',
-                                        'Other' => 'Other',
+                                        'Strong Support' => '⭐⭐⭐⭐⭐ Strong Support',
+                                        'Support' => '⭐⭐⭐⭐ Support',
+                                        'Leaning' => '⭐⭐⭐ Leaning',
+                                        'Neutral' => '⭐⭐ Neutral',
+                                        'Opposition Leaning' => '⭐ Opposition Leaning',
+                                        'Strong Opposition' => '⭐⭐⭐⭐⭐ Strong Opposition',
+                                        'Undecided' => '❓ Undecided',
                                     ])
-                                    ->default('Neutral'),
+                                    ->default('Neutral')
+                                    ->required(),
 
-                                TextInput::make('party_preference'),
-
-                                TextInput::make('party_support'),
+                                TextInput::make('party_preference')
+                                    ->label('Political Remark')
+                                    ->columnSpanFull(),
 
                                 Select::make('priority')
                                     ->options([
@@ -168,7 +201,8 @@ class VoterForm
                             ]),
 
                     ]),
-                                    Section::make('Campaign Information')
+
+                Section::make('Campaign Information')
                     ->schema([
 
                         Grid::make(3)
@@ -238,10 +272,12 @@ class VoterForm
                             ->schema([
 
                                 TextInput::make('latitude')
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->step(0.000001),
 
                                 TextInput::make('longitude')
-                                    ->numeric(),
+                                    ->numeric()
+                                    ->step(0.000001),
 
                             ]),
 
@@ -262,5 +298,4 @@ class VoterForm
 
             ]);
     }
-    
 }

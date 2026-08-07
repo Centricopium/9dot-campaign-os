@@ -31,6 +31,10 @@ class Village extends Model
     {
         return $this->hasMany(Booth::class);
     }
+    public function aliases()
+    {
+        return $this->hasMany(VillageAlias::class);
+    }
     public function users()
     {
         return $this->hasMany(User::class);

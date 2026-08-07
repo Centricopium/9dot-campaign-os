@@ -12,111 +12,164 @@ class VoterInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('house_id')
-                    ->numeric()
+
+                TextEntry::make('house.house_no')
+                    ->label('House')
                     ->placeholder('-'),
+
                 TextEntry::make('serial_no')
                     ->placeholder('-'),
+
                 TextEntry::make('part_no')
                     ->placeholder('-'),
+
                 TextEntry::make('epic_no')
                     ->placeholder('-'),
+
                 TextEntry::make('name'),
+
                 TextEntry::make('father_husband_name')
                     ->placeholder('-'),
+
                 TextEntry::make('gender')
                     ->placeholder('-'),
+
                 TextEntry::make('age')
                     ->numeric()
                     ->placeholder('-'),
+
                 TextEntry::make('dob')
                     ->date()
                     ->placeholder('-'),
+
                 TextEntry::make('mobile')
                     ->placeholder('-'),
+
                 TextEntry::make('whatsapp')
                     ->placeholder('-'),
+
                 TextEntry::make('email')
-                    ->label('Email address')
+                    ->label('Email')
                     ->placeholder('-'),
+
                 TextEntry::make('house_no')
                     ->placeholder('-'),
+
                 TextEntry::make('address')
                     ->placeholder('-')
                     ->columnSpanFull(),
+
                 TextEntry::make('photo')
                     ->placeholder('-'),
+
                 TextEntry::make('caste')
                     ->placeholder('-'),
+
                 TextEntry::make('religion')
                     ->placeholder('-'),
+
                 TextEntry::make('category')
                     ->placeholder('-'),
+
                 TextEntry::make('occupation')
                     ->placeholder('-'),
+
                 TextEntry::make('education')
                     ->placeholder('-'),
-                TextEntry::make('support_level'),
-                TextEntry::make('party_support')
+
+                TextEntry::make('support_level')
+                    ->badge(),
+
+                TextEntry::make('politicalParty.name')
+                    ->label('Political Party')
+                    ->badge()
                     ->placeholder('-'),
+
                 TextEntry::make('party_preference')
+                    ->label('Political Remark')
                     ->placeholder('-'),
+
                 IconEntry::make('is_influencer')
                     ->boolean(),
+
                 IconEntry::make('is_volunteer')
                     ->boolean(),
+
                 TextEntry::make('last_contact_date')
                     ->date()
                     ->placeholder('-'),
+
                 TextEntry::make('voter_type')
                     ->placeholder('-'),
+
                 TextEntry::make('blood_group')
                     ->placeholder('-'),
+
                 IconEntry::make('disability')
                     ->boolean(),
+
                 IconEntry::make('government_scheme')
                     ->boolean(),
+
                 TextEntry::make('government_scheme_name')
                     ->placeholder('-'),
+
                 TextEntry::make('facebook')
                     ->placeholder('-'),
+
                 TextEntry::make('instagram')
                     ->placeholder('-'),
+
                 TextEntry::make('twitter')
                     ->placeholder('-'),
+
                 TextEntry::make('family_members')
                     ->numeric()
                     ->placeholder('-'),
+
                 TextEntry::make('booth_committee_role')
                     ->placeholder('-'),
+
                 TextEntry::make('panna_pramukh')
                     ->placeholder('-'),
+
                 TextEntry::make('polling_agent')
                     ->placeholder('-'),
-                TextEntry::make('priority'),
+
+                TextEntry::make('priority')
+                    ->placeholder('-'),
+
                 TextEntry::make('next_followup')
                     ->date()
                     ->placeholder('-'),
+
                 TextEntry::make('latitude')
                     ->numeric()
                     ->placeholder('-'),
+
                 TextEntry::make('longitude')
                     ->numeric()
                     ->placeholder('-'),
+
                 TextEntry::make('internal_notes')
                     ->placeholder('-')
                     ->columnSpanFull(),
+
                 TextEntry::make('remarks')
                     ->placeholder('-')
                     ->columnSpanFull(),
+
                 IconEntry::make('is_active')
                     ->boolean(),
+
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),
+
                 TextEntry::make('updated_at')
                     ->dateTime()
                     ->placeholder('-'),
+
             ]);
     }
 }

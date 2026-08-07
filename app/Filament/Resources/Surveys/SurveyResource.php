@@ -9,6 +9,7 @@ use App\Filament\Resources\Surveys\Pages\ViewSurvey;
 use App\Filament\Resources\Surveys\Schemas\SurveyForm;
 use App\Filament\Resources\Surveys\Schemas\SurveyInfolist;
 use App\Filament\Resources\Surveys\Tables\SurveysTable;
+use App\Filament\Resources\Surveys\RelationManagers\QuestionsRelationManager;
 use App\Models\Survey;
 use BackedEnum;
 use UnitEnum;
@@ -45,11 +46,11 @@ class SurveyResource extends Resource
     }
 
     public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        QuestionsRelationManager::class,
+    ];
+}
 
     public static function getPages(): array
     {

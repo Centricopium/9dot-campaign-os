@@ -187,22 +187,80 @@
 
                 @foreach($questions as $question)
 
-                    <div class="mb-5">
+    <div class="mb-5">
 
-                        <label class="block font-semibold mb-2">
+        <label class="block font-semibold mb-2">
 
-                            {{ $question->question }}
+            {{ $question->question }}
 
-                        </label>
+            @if($question->required)
+                <span class="text-red-600">*</span>
+            @endif
 
-                        <input
-                            type="text"
-                            wire:model="answers.{{ $question->id }}"
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+        </label>
 
-                    </div>
+        @switch($question->type)
 
-                @endforeach
+            @case('text')
+
+                <input
+                    type="text"
+                    wire:model="answers.{{ $question->id }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+
+            @break
+
+
+            @case('textarea')
+
+                <textarea
+                    wire:model="answers.{{ $question->id }}"
+                    rows="4"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+                </textarea>
+
+            @break
+
+
+            @case('number')
+
+                <input
+                    type="number"
+                    wire:model="answers.{{ $question->id }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+
+            @break
+
+
+            @case('yes_no')
+
+                <select
+                    wire:model="answers.{{ $question->id }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+
+                    <option value="">Select</option>
+
+                    <option value="Yes">Yes</option>
+
+                    <option value="No">No</option>
+
+                </select>
+
+            @break
+
+
+            @default
+
+                <input
+                    type="text"
+                    wire:model="answers.{{ $question->id }}"
+                    class="w-full rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+
+        @endswitch
+
+    </div>
+
+@endforeach
 
                 @if(count($questions))
 

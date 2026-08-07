@@ -2,38 +2,22 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\House;
+use App\Services\HouseService;
 use BackedEnum;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
-use App\Models\House;
-use App\Services\HouseService;
 
 class House360 extends Page
 {
     public ?House $house = null;
 
     public ?string $search = '';
-    public array $politicalSummary = [];
-    public function searchHouse(HouseService $service): void
-    {
-        $record = House::query()
-            ->where('house_no', $this->search)
-             ->orWhere('head_of_family', 'like', '%' . $this->search . '%')
-            ->orWhere('mobile', $this->search)
-            ->first();
 
-        $this->house = $record
-            ? $service->getHouse($record->id)
-            : null;
-        if ($this->house) {
-             $this->politicalSummary = $service->getPoliticalSummary($this->house);
-        }    
-    }
-    public function startSurvey()
-    {
-        return redirect()->route('filament.admin.pages.survey-runner');
-    }
+    public array $politicalSummary = [];
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;
 
     protected static string|UnitEnum|null $navigationGroup = 'Campaign';
@@ -45,4 +29,36 @@ class House360 extends Page
     protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.pages.house360';
+
+    public function searchHouse(HouseService $service): void
+    {
+        $record = House::query()
+            ->where('house_no', $this->search)
+            ->orWhere('head_of_family', 'like', '%' . $this->search . '%')
+            ->orWhere('mobile', $this->search)
+            ->first();
+
+        if (! $record) {
+
+            $this->house = null;
+            $this->politicalSummary = [];
+
+            Notification::make()
+                ->title('House not found')
+                ->body('Please check House Number, Head of Family or Mobile Number.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $this->house = $service->getHouse($record->id);
+
+        $this->politicalSummary = $service->getPoliticalSummary($this->house);
+    }
+
+    public function startSurvey()
+    {
+        return redirect()->route('filament.admin.pages.survey-runner');
+    }
 }

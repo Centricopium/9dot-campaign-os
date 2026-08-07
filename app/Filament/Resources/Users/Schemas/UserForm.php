@@ -5,130 +5,148 @@ namespace App\Filament\Resources\Users\Schemas;
 use App\Models\Booth;
 use App\Models\Constituency;
 use App\Models\Village;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Spatie\Permission\Models\Role;
-
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
+        return $schema->components([
 
-    Section::make('Basic Information')
-        ->schema([
-
-            Grid::make(2)
+            Section::make('Basic Information')
                 ->schema([
 
-                    TextInput::make('name')
-                        ->label('Full Name')
-                        ->required()
-                        ->maxLength(255),
+                    Grid::make(2)
+                        ->schema([
 
-                    TextInput::make('email')
-                        ->label('Email Address')
-                        ->email()
-                        ->required()
-                        ->unique(ignoreRecord: true),
+                            TextInput::make('name')
+                                ->required()
+                                ->maxLength(255),
 
-                    TextInput::make('mobile')
-                        ->label('Mobile Number')
-                        ->tel()
-                        ->maxLength(15),
+                            TextInput::make('email')
+                                ->email()
+                                ->required()
+                                ->unique(ignoreRecord: true),
 
-                    TextInput::make('designation')
-                        ->label('Designation'),
+                            TextInput::make('mobile')
+                                ->tel()
+                                ->maxLength(10),
 
-                    TextInput::make('employee_code')
-                        ->label('Employee Code'),
+                            TextInput::make('employee_code')
+                                ->unique(ignoreRecord: true),
 
-                    Toggle::make('is_active')
-                        ->default(true),
+                            TextInput::make('designation'),
+
+                            FileUpload::make('profile_photo')
+                                ->directory('users')
+                                ->image(),
+
+                        ]),
 
                 ]),
 
-        ]),
-
-    Section::make('Login')
-        ->schema([
-
-            Grid::make(2)
+            Section::make('Login')
                 ->schema([
 
                     TextInput::make('password')
                         ->password()
                         ->revealable()
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->required(fn (string $operation): bool => $operation === 'create'),
-
-                    DateTimePicker::make('email_verified_at'),
+                        ->required(fn (string $operation): bool => $operation === 'create')
+                        ->dehydrateStateUsing(fn (?string $state): ?string => filled($state) ? Hash::make($state) : null)
+                        ->dehydrated(fn (?string $state): bool => filled($state)),
 
                 ]),
-    Section::make('Area Assignment')
-    ->schema([
 
-        Grid::make(3)
-            ->schema([
+            Section::make('Role & Access')
+                ->schema([
 
-                Select::make('constituency_id')
-                    ->label('Constituency')
-                    ->relationship('constituency', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->live(),
+                    Select::make('roles')
+                        ->label('Role')
+                        ->relationship('roles', 'name')
+                        ->preload()
+                        ->searchable()
+                        ->required(),
 
-                Select::make('village_id')
-                    ->label('Village')
-                    ->relationship('village', 'name')
-                    ->searchable()
-                    ->preload(),
+                ]),
 
-                Select::make('booth_id')
-    ->label('Booth')
-    ->relationship('booth', 'booth_name')
-    ->searchable()
-    ->preload(),
+            Section::make('Area Assignment')
+                ->schema([
 
-        
-                    ]),
-                    Section::make('Role Assignment')
-    ->schema([
+                    Grid::make(3)
+                        ->schema([
 
-        Select::make('roles')
-            ->label('User Role')
-            ->relationship('roles', 'name')
-            ->multiple()
-            ->preload()
-            ->searchable(),
+                            Select::make('constituency_id')
+                                ->label('Constituency')
+                                ->options(fn () => Constituency::pluck('name', 'id')->toArray())
+                                ->live()
+                                ->searchable()
+                                ->afterStateUpdated(function (Set $set) {
+                                    $set('village_id', null);
+                                    $set('booth_id', null);
+                                }),
 
-    ]),
-    Section::make('Profile')
-    ->schema([
+                            Select::make('village_id')
+                                ->label('Village')
+                                ->options(function (Get $get) {
+                                    if (! $get('constituency_id')) {
+                                        return [];
+                                    }
 
-        FileUpload::make('profile_photo')
-            ->image()
-            ->directory('users')
-            ->imageEditor(),
+                                    return Village::where('constituency_id', $get('constituency_id'))
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                })
+                                ->live()
+                                ->searchable()
+                                ->afterStateUpdated(function (Set $set) {
+                                    $set('booth_id', null);
+                                }),
 
-        Textarea::make('notes')
-            ->rows(4)
-            ->columnSpanFull(),
+                            Select::make('booth_id')
+                                ->label('Booth')
+                                ->options(function (Get $get) {
+                                    if (! $get('village_id')) {
+                                        return [];
+                                    }
 
-    ]),
+                                    return Booth::where('village_id', $get('village_id'))
+                                        ->pluck('booth_name', 'id')
+                                        ->toArray();
+                                })
+                                ->searchable(),
 
-    ]),    
-        ]),
+                        ]),
 
-]);
+                ]),
+
+            Section::make('Status')
+                ->schema([
+
+                    Toggle::make('is_super_admin')
+                        ->label('Super Admin')
+                        ->hidden(fn () => ! auth()->user()?->isSuperAdmin())
+                        ->default(false),
+
+                    Toggle::make('is_active')
+                        ->default(true),
+
+                    Textarea::make('notes')
+                        ->rows(4)
+                        ->columnSpanFull(),
+
+                ]),
+
+        ]);
     }
 }

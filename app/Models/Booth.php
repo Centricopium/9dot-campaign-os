@@ -10,6 +10,7 @@ class Booth extends Model
     protected $fillable = [
         'village_id',
         'booth_no',
+        'part_no',
         'booth_name',
         'total_voters',
         'male_voters',
@@ -28,18 +29,19 @@ class Booth extends Model
     {
         return $this->belongsTo(Village::class);
     }
-    
+
     public function voters()
     {
         return $this->hasMany(Voter::class);
     }
+
     public function houses()
     {
         return $this->hasMany(House::class);
     }
+
     public function users()
     {
-    return $this->hasMany(User::class);
+        return $this->hasMany(User::class);
     }
-    
 }

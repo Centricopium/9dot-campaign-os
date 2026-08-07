@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SurveyAnswer extends Model
 {
@@ -12,13 +13,22 @@ class SurveyAnswer extends Model
         'answer',
     ];
 
-    public function response()
+    public function response(): BelongsTo
     {
         return $this->belongsTo(SurveyResponse::class, 'response_id');
     }
 
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(SurveyQuestion::class, 'question_id');
+    }
+
+    public function getDisplayAnswerAttribute(): string
+    {
+        if (is_array($this->answer)) {
+            return implode(', ', $this->answer);
+        }
+
+        return (string) $this->answer;
     }
 }
