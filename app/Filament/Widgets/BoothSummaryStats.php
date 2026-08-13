@@ -9,42 +9,27 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class BoothSummaryStats extends StatsOverviewWidget
 {
-    public ?int $boothId = null;
-
     protected function getStats(): array
     {
-        $houseQuery = House::query();
-
-        $voterQuery = Voter::query();
-
-        if ($this->boothId) {
-
-            $houseQuery->where('booth_id', $this->boothId);
-
-            $voterQuery->whereHas('house', function ($query) {
-                $query->where('booth_id', $this->boothId);
-            });
-        }
-
         return [
 
-            Stat::make('🏠 Houses', $houseQuery->count())
+            Stat::make('🏠 Houses', House::count())
                 ->description('Total Houses')
                 ->color('primary'),
 
-            Stat::make('👥 Voters', $voterQuery->count())
+            Stat::make('👥 Voters', Voter::count())
                 ->description('Total Voters')
                 ->color('success'),
 
             Stat::make(
                 '🙋 Volunteers',
-                (clone $voterQuery)->where('is_volunteer', true)->count()
+                Voter::where('is_volunteer', true)->count()
             )
                 ->color('warning'),
 
             Stat::make(
                 '⭐ Influencers',
-                (clone $voterQuery)->where('is_influencer', true)->count()
+                Voter::where('is_influencer', true)->count()
             )
                 ->color('danger'),
 

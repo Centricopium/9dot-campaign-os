@@ -58,10 +58,10 @@ class VoterResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->with('house');
-    }
+{
+    return parent::getEloquentQuery()
+        ->with('house.booth.village');
+}
 
     public static function getGloballySearchableAttributes(): array
     {

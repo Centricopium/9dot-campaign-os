@@ -6,10 +6,33 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
 
+            // Assignment
+            $table->foreignId('constituency_id')
+                ->nullable()
+                ->after('id')
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('village_id')
+                ->nullable()
+                ->after('constituency_id')
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId('booth_id')
+                ->nullable()
+                ->after('village_id')
+                ->constrained()
+                ->nullOnDelete();
+
+            // Profile
             $table->string('mobile')->nullable()->after('email');
 
             $table->string('designation')->nullable()->after('mobile');
@@ -18,55 +41,38 @@ return new class extends Migration
 
             $table->string('profile_photo')->nullable()->after('employee_code');
 
-            $table->foreignId('constituency_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            // Status
+            $table->boolean('is_active')->default(true)->after('profile_photo');
 
-            $table->foreignId('village_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->timestamp('last_login_at')->nullable()->after('is_active');
 
-            $table->foreignId('booth_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            // Notes
+            $table->longText('notes')->nullable()->after('last_login_at');
 
-            $table->boolean('is_super_admin')
-                ->default(false);
-
-            $table->boolean('is_active')
-                ->default(true);
-
-            $table->timestamp('last_login_at')
-                ->nullable();
-
-            $table->text('notes')
-                ->nullable();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
 
-            $table->dropConstrainedForeignId('booth_id');
-
-            $table->dropConstrainedForeignId('village_id');
-
             $table->dropConstrainedForeignId('constituency_id');
+            $table->dropConstrainedForeignId('village_id');
+            $table->dropConstrainedForeignId('booth_id');
 
             $table->dropColumn([
                 'mobile',
                 'designation',
                 'employee_code',
                 'profile_photo',
-                'is_super_admin',
                 'is_active',
                 'last_login_at',
                 'notes',
             ]);
+
         });
     }
 };

@@ -25,8 +25,13 @@ class BoothImportService
         // 2. Alias Match
         if (! $village) {
 
-            $alias = VillageAlias::where('alias', $villageName)->first();
-
+            $alias = VillageAlias::query()
+    ->where('alias', $villageName)
+    ->whereHas(
+        'village',
+        fn ($query) => $query->where('constituency_id', $constituencyId),
+    )
+    ->first();
             if ($alias) {
                 $village = $alias->village;
             }

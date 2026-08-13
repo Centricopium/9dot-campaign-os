@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Village extends Model
 {
@@ -22,22 +23,47 @@ class Village extends Model
         'is_active',
     ];
 
-    public function constituency()
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function constituency(): BelongsTo
     {
         return $this->belongsTo(Constituency::class);
     }
 
-    public function booths()
+    public function booths(): HasMany
     {
         return $this->hasMany(Booth::class);
     }
-    public function aliases()
+
+    public function aliases(): HasMany
     {
         return $this->hasMany(VillageAlias::class);
     }
-    public function users()
+
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
-   
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dynamic Voter Count
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTotalVotersAttribute(): int
+    {
+        return Voter::query()
+            ->whereHas('house.booth', function ($query) {
+                $query->where('village_id', $this->id);
+            })
+            ->count();
+    }
+
+    public function getTotalBoothsAttribute(): int
+    {
+        return $this->booths()->count();
+    }
 }

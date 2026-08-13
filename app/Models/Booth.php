@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Booth extends Model
 {
@@ -25,23 +27,70 @@ class Booth extends Model
         'is_active',
     ];
 
-    public function village()
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function village(): BelongsTo
     {
         return $this->belongsTo(Village::class);
     }
 
-    public function voters()
-    {
-        return $this->hasMany(Voter::class);
-    }
-
-    public function houses()
+    public function houses(): HasMany
     {
         return $this->hasMany(House::class);
     }
 
-    public function users()
+    public function voters(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Voter::class,
+            House::class,
+            'booth_id',
+            'house_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dynamic Voter Counts
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTotalVotersAttribute(): int
+    {
+        return $this->voters()->count();
+    }
+
+    public function getMaleVotersAttribute(): int
+    {
+        return $this->voters()
+            ->where('gender', 'Male')
+            ->count();
+    }
+
+    public function getFemaleVotersAttribute(): int
+    {
+        return $this->voters()
+            ->where('gender', 'Female')
+            ->count();
+    }
+
+    public function getOtherVotersAttribute(): int
+    {
+        return $this->voters()
+            ->where(function ($query) {
+                $query
+                    ->where('gender', 'Other')
+                    ->orWhereNull('gender');
+            })
+            ->count();
     }
 }

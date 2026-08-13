@@ -17,7 +17,7 @@ class HousesTable
         return $table
             ->columns([
 
-                TextColumn::make('booth.village.village_name')
+                TextColumn::make('booth.village.name')
                     ->label('Village')
                     ->searchable()
                     ->sortable()

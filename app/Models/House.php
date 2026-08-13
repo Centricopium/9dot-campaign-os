@@ -49,7 +49,9 @@ class House extends Model
 
     public function getDisplayNameAttribute(): string
     {
-        return trim("{$this->house_no} - {$this->head_of_family}");
+        return trim(
+            "{$this->house_no} - {$this->head_of_family}"
+        );
     }
 
     public function getTotalVotersAttribute(): int
@@ -82,20 +84,17 @@ class House extends Model
     {
         return $this->voters()
             ->whereIn('support_level', [
-                'Strong Support',
-                'Support',
+                'Strong Congress',
+                'Congress Leaning',
+                'Strong BJP',
+                'BJP Leaning',
             ])
             ->count();
     }
 
     public function getOppositionCountAttribute(): int
     {
-        return $this->voters()
-            ->whereIn('support_level', [
-                'Opposition Leaning',
-                'Strong Opposition',
-            ])
-            ->count();
+        return 0;
     }
 
     public function getUndecidedCountAttribute(): int

@@ -5,101 +5,186 @@ namespace App\Services\Dashboard;
 use App\Models\Booth;
 use App\Models\PoliticalParty;
 use App\Models\Voter;
+use Illuminate\Support\Facades\DB;
 
 class BoothDashboardService
 {
     public function summary(Booth $booth): array
     {
-        $query = Voter::whereHas('house', function ($q) use ($booth) {
-            $q->where('booth_id', $booth->id);
-        });
+        $voterQuery = Voter::query()
+            ->whereHas('house', function ($query) use ($booth) {
+                $query->where('booth_id', $booth->id);
+            });
 
-        $summary = [
+        $stats = (clone $voterQuery)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male")
+            ->selectRaw("SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN gender = 'Other' OR gender IS NULL
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as other
+            ")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN is_active = 1
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as active_voters
+            ")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN is_volunteer = 1
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as volunteers
+            ")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN is_influencer = 1
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as influencers
+            ")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN support_level = 'Neutral'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as neutral
+            ")
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN support_level = 'Undecided'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as undecided
+            ")
+            ->first();
 
-            'houses' => $booth->houses()->count(),
+        /*
+         * Party + support level aggregation.
+         *
+         * One query handles all active parties.
+         */
+        $partyStats = (clone $voterQuery)
+            ->select([
+                'political_party_id',
+                'support_level',
+            ])
+            ->selectRaw('COUNT(*) as total')
+            ->groupBy(
+                'political_party_id',
+                'support_level'
+            )
+            ->get();
 
-            'voters' => (clone $query)->count(),
-
-            'neutral' => (clone $query)
-                ->where('support_level', 'Neutral')
-                ->count(),
-
-            'undecided' => (clone $query)
-                ->where('support_level', 'Undecided')
-                ->count(),
-
-            'volunteers' => (clone $query)
-                ->where('is_volunteer', true)
-                ->count(),
-
-            'influencers' => (clone $query)
-                ->where('is_influencer', true)
-                ->count(),
-
-            'parties' => [],
-
-        ];
-
-        $parties = PoliticalParty::where('is_active', true)
+        $parties = PoliticalParty::query()
+            ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();
 
+        $partySummary = [];
+
         foreach ($parties as $party) {
+            $rows = $partyStats->where(
+                'political_party_id',
+                $party->id
+            );
 
-            $summary['parties'][] = [
-
+            $partySummary[] = [
                 'id' => $party->id,
-
                 'name' => $party->name,
-
                 'short_name' => $party->short_name,
-
                 'symbol' => $party->symbol,
-
                 'color' => $party->color,
 
-                'count' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->count(),
+                'total' => $rows->sum('total'),
 
-                'strong_support' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Strong Support')
-                    ->count(),
+                'strong_congress' => $this->supportCount(
+                    $rows,
+                    'Strong Congress'
+                ),
 
-                'support' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Support')
-                    ->count(),
+                'congress_leaning' => $this->supportCount(
+                    $rows,
+                    'Congress Leaning'
+                ),
 
-                'leaning' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Leaning')
-                    ->count(),
+                'neutral' => $this->supportCount(
+                    $rows,
+                    'Neutral'
+                ),
 
-                'neutral' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Neutral')
-                    ->count(),
+                'undecided' => $this->supportCount(
+                    $rows,
+                    'Undecided'
+                ),
 
-                'opposition_leaning' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Opposition Leaning')
-                    ->count(),
+                'bjp_leaning' => $this->supportCount(
+                    $rows,
+                    'BJP Leaning'
+                ),
 
-                'strong_opposition' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Strong Opposition')
-                    ->count(),
+                'strong_bjp' => $this->supportCount(
+                    $rows,
+                    'Strong BJP'
+                ),
 
-                'undecided' => (clone $query)
-                    ->where('political_party_id', $party->id)
-                    ->where('support_level', 'Undecided')
-                    ->count(),
-
+                'other' => $this->supportCount(
+                    $rows,
+                    'Other'
+                ),
             ];
         }
 
-        return $summary;
+        return [
+            'houses' => $booth->houses()->count(),
+
+            'voters' => (int) ($stats->total ?? 0),
+
+            'male' => (int) ($stats->male ?? 0),
+
+            'female' => (int) ($stats->female ?? 0),
+
+            'other' => (int) ($stats->other ?? 0),
+
+            'active_voters' => (int) ($stats->active_voters ?? 0),
+
+            'volunteers' => (int) ($stats->volunteers ?? 0),
+
+            'influencers' => (int) ($stats->influencers ?? 0),
+
+            'neutral' => (int) ($stats->neutral ?? 0),
+
+            'undecided' => (int) ($stats->undecided ?? 0),
+
+            'parties' => $partySummary,
+        ];
+    }
+
+    protected function supportCount(
+        $rows,
+        string $supportLevel
+    ): int {
+        return (int) (
+            $rows
+                ->where('support_level', $supportLevel)
+                ->sum('total')
+        );
     }
 }

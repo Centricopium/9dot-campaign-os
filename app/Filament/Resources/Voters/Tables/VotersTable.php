@@ -20,10 +20,14 @@ class VotersTable
     public static function configure(Table $table): Table
     {
         return $table
-
             ->defaultSort('name')
 
             ->columns([
+
+                TextColumn::make('serial_no')
+                    ->label('Serial No.')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('epic_no')
                     ->label('EPIC')
@@ -42,19 +46,27 @@ class VotersTable
                     ->searchable()
                     ->toggleable(),
 
+                TextColumn::make('house.booth.village.name')
+                    ->label('Village')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('booth.booth_no')
                     ->label('Booth')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('mobile')
+                    ->label('Mobile')
                     ->copyable()
                     ->searchable(),
 
                 TextColumn::make('gender')
+                    ->label('Gender')
                     ->badge(),
 
                 TextColumn::make('age')
+                    ->label('Age')
                     ->sortable(),
 
                 TextColumn::make('politicalParty.short_name')
@@ -67,30 +79,68 @@ class VotersTable
                 TextColumn::make('support_level')
                     ->label('Support')
                     ->badge()
-                    ->icon(fn (?string $state): string => match ($state) {
+                    ->icon(
+                        fn (?string $state): string => match ($state) {
 
-                        'Strong Support' => 'heroicon-m-hand-thumb-up',
-                        'Support' => 'heroicon-m-hand-thumb-up',
-                        'Leaning' => 'heroicon-m-arrow-trending-up',
-                        'Neutral' => 'heroicon-m-minus-circle',
-                        'Opposition Leaning' => 'heroicon-m-arrow-trending-down',
-                        'Strong Opposition' => 'heroicon-m-hand-thumb-down',
-                        'Undecided' => 'heroicon-m-question-mark-circle',
+                            'Strong Support' =>
+                                'heroicon-m-hand-thumb-up',
 
-                        default => 'heroicon-m-minus-circle',
-                    })
-                    ->color(fn (?string $state): string => match ($state) {
+                            'Moderate Support' =>
+                                'heroicon-m-hand-thumb-up',
 
-                        'Strong Support' => 'success',
-                        'Support' => 'success',
-                        'Leaning' => 'info',
-                        'Neutral' => 'gray',
-                        'Opposition Leaning' => 'warning',
-                        'Strong Opposition' => 'danger',
-                        'Undecided' => 'warning',
+                            'Leaning Support' =>
+                                'heroicon-m-arrow-trending-up',
 
-                        default => 'gray',
-                    }),
+                            'Neutral' =>
+                                'heroicon-m-minus-circle',
+
+                            'Undecided' =>
+                                'heroicon-m-question-mark-circle',
+
+                            'Leaning Opposition' =>
+                                'heroicon-m-arrow-trending-down',
+
+                            'Moderate Opposition' =>
+                                'heroicon-m-arrow-trending-down',
+
+                            'Strong Opposition' =>
+                                'heroicon-m-hand-thumb-down',
+
+                            default =>
+                                'heroicon-m-minus-circle',
+                        }
+                    )
+                    ->color(
+                        fn (?string $state): string => match ($state) {
+
+                            'Strong Support' =>
+                                'success',
+
+                            'Moderate Support' =>
+                                'success',
+
+                            'Leaning Support' =>
+                                'info',
+
+                            'Neutral' =>
+                                'gray',
+
+                            'Undecided' =>
+                                'warning',
+
+                            'Leaning Opposition' =>
+                                'warning',
+
+                            'Moderate Opposition' =>
+                                'warning',
+
+                            'Strong Opposition' =>
+                                'danger',
+
+                            default =>
+                                'gray',
+                        }
+                    ),
 
                 IconColumn::make('is_volunteer')
                     ->label('Volunteer')
@@ -101,16 +151,27 @@ class VotersTable
                     ->boolean(),
 
                 TextColumn::make('priority')
+                    ->label('Priority')
                     ->badge()
-                    ->color(fn (?string $state): string => match ($state) {
+                    ->color(
+                        fn (?string $state): string => match ($state) {
 
-                        'Critical' => 'danger',
-                        'High' => 'warning',
-                        'Medium' => 'info',
-                        'Low' => 'gray',
+                            'Critical' =>
+                                'danger',
 
-                        default => 'gray',
-                    }),
+                            'High' =>
+                                'warning',
+
+                            'Medium' =>
+                                'info',
+
+                            'Low' =>
+                                'gray',
+
+                            default =>
+                                'gray',
+                        }
+                    ),
 
                 TextColumn::make('last_contact_date')
                     ->label('Last Contact')
@@ -135,18 +196,22 @@ class VotersTable
 
                 SelectFilter::make('political_party_id')
                     ->label('Political Party')
-                    ->relationship('politicalParty', 'name'),
+                    ->relationship(
+                        'politicalParty',
+                        'name'
+                    ),
 
                 SelectFilter::make('support_level')
                     ->label('Support Level')
                     ->options([
                         'Strong Support' => 'Strong Support',
-                        'Support' => 'Support',
-                        'Leaning' => 'Leaning',
+                        'Moderate Support' => 'Moderate Support',
+                        'Leaning Support' => 'Leaning Support',
                         'Neutral' => 'Neutral',
-                        'Opposition Leaning' => 'Opposition Leaning',
-                        'Strong Opposition' => 'Strong Opposition',
                         'Undecided' => 'Undecided',
+                        'Leaning Opposition' => 'Leaning Opposition',
+                        'Moderate Opposition' => 'Moderate Opposition',
+                        'Strong Opposition' => 'Strong Opposition',
                     ]),
 
                 TernaryFilter::make('is_volunteer')

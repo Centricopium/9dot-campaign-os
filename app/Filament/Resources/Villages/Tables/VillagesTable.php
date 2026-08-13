@@ -5,9 +5,9 @@ namespace App\Filament\Resources\Villages\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class VillagesTable
 {
@@ -22,6 +22,7 @@ class VillagesTable
                     ->sortable(),
 
                 TextColumn::make('name')
+                    ->label('Village')
                     ->searchable()
                     ->sortable(),
 
@@ -32,21 +33,20 @@ class VillagesTable
                     ->searchable(),
 
                 TextColumn::make('total_voters')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Total Voters')
+                    ->numeric(),
 
                 TextColumn::make('total_booths')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Total Booths')
+                    ->numeric(),
 
                 IconColumn::make('is_active')
+                    ->label('Active')
                     ->boolean(),
 
             ])
 
-            ->filters([
-                //
-            ])
+            ->filters([])
 
             ->recordActions([
                 EditAction::make(),

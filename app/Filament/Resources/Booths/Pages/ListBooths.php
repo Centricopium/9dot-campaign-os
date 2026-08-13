@@ -10,6 +10,10 @@ class ListBooths extends ListRecords
 {
     protected static string $resource = BoothResource::class;
 
+    protected ?string $defaultTableSortColumn = 'booth_no';
+
+    protected ?string $defaultTableSortDirection = 'asc';
+
     protected function getHeaderActions(): array
     {
         return [
