@@ -20,7 +20,7 @@ use Filament\Tables\Table;
 
 class SurveyResponseResource extends Resource
 {
-    protected static string|UnitEnum|null $navigationGroup = 'Masters';
+    protected static string|UnitEnum|null $navigationGroup = 'Survey Management';
     protected static ?int $navigationSort = 3;
     protected static ?string $model = SurveyResponse::class;
 

@@ -22,8 +22,7 @@ class ImportCentre extends Page
     protected static string|BackedEnum|null $navigationIcon =
         Heroicon::OutlinedArrowUpTray;
 
-    protected static string|UnitEnum|null $navigationGroup =
-        'Data Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Data Management';
 
     protected static ?string $navigationLabel = 'Import Centre';
 

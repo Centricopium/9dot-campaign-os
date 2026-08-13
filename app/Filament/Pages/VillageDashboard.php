@@ -20,7 +20,7 @@ class VillageDashboard extends Page
 
     protected static ?string $title = 'Village Dashboard';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     protected string $view = 'filament.pages.village-dashboard';
 

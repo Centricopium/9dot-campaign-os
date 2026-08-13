@@ -20,7 +20,7 @@ class BoothDashboard extends Page
 
     protected static ?string $title = 'Booth Dashboard';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected string $view = 'filament.pages.booth-dashboard';
 

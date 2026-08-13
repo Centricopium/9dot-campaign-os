@@ -16,6 +16,9 @@ use Filament\Tables\Table;
 
 class SurveyQuestionResource extends Resource
 {
+    protected static string|\UnitEnum|null $navigationGroup = 'Survey Management';
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $model = SurveyQuestion::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

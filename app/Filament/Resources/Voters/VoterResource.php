@@ -27,7 +27,7 @@ class VoterResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Election Management';
+    protected static string|UnitEnum|null $navigationGroup = 'Masters';
 
     protected static ?string $navigationLabel = 'Voters';
 

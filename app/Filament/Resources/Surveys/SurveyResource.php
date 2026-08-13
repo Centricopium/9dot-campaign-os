@@ -23,7 +23,7 @@ class SurveyResource extends Resource
 
 {
     protected static string|UnitEnum|null $navigationGroup = 'Masters';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 6;
     protected static ?string $model = Survey::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
