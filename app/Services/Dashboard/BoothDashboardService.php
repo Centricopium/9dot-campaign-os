@@ -5,7 +5,6 @@ namespace App\Services\Dashboard;
 use App\Models\Booth;
 use App\Models\PoliticalParty;
 use App\Models\Voter;
-use Illuminate\Support\Facades\DB;
 
 class BoothDashboardService
 {
@@ -16,19 +15,46 @@ class BoothDashboardService
                 $query->where('booth_id', $booth->id);
             });
 
+        /*
+        |--------------------------------------------------------------------------
+        | Overall Booth Statistics
+        |--------------------------------------------------------------------------
+        */
+
         $stats = (clone $voterQuery)
             ->selectRaw('COUNT(*) as total')
-            ->selectRaw("SUM(CASE WHEN gender = 'Male' THEN 1 ELSE 0 END) as male")
-            ->selectRaw("SUM(CASE WHEN gender = 'Female' THEN 1 ELSE 0 END) as female")
+
             ->selectRaw("
                 SUM(
                     CASE
-                        WHEN gender = 'Other' OR gender IS NULL
+                        WHEN gender = 'Male'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as male
+            ")
+
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN gender = 'Female'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) as female
+            ")
+
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN gender = 'Other'
+                             OR gender IS NULL
                         THEN 1
                         ELSE 0
                     END
                 ) as other
             ")
+
             ->selectRaw("
                 SUM(
                     CASE
@@ -38,6 +64,7 @@ class BoothDashboardService
                     END
                 ) as active_voters
             ")
+
             ->selectRaw("
                 SUM(
                     CASE
@@ -47,6 +74,7 @@ class BoothDashboardService
                     END
                 ) as volunteers
             ")
+
             ->selectRaw("
                 SUM(
                     CASE
@@ -56,6 +84,7 @@ class BoothDashboardService
                     END
                 ) as influencers
             ")
+
             ->selectRaw("
                 SUM(
                     CASE
@@ -65,6 +94,7 @@ class BoothDashboardService
                     END
                 ) as neutral
             ")
+
             ->selectRaw("
                 SUM(
                     CASE
@@ -74,24 +104,33 @@ class BoothDashboardService
                     END
                 ) as undecided
             ")
+
             ->first();
 
         /*
-         * Party + support level aggregation.
-         *
-         * One query handles all active parties.
-         */
+        |--------------------------------------------------------------------------
+        | Party + Support Level Aggregation
+        |--------------------------------------------------------------------------
+        */
+
         $partyStats = (clone $voterQuery)
             ->select([
                 'political_party_id',
                 'support_level',
             ])
             ->selectRaw('COUNT(*) as total')
+            ->whereNotNull('political_party_id')
             ->groupBy(
                 'political_party_id',
                 'support_level'
             )
             ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Active Political Parties
+        |--------------------------------------------------------------------------
+        */
 
         $parties = PoliticalParty::query()
             ->where('is_active', true)
@@ -101,29 +140,58 @@ class BoothDashboardService
         $partySummary = [];
 
         foreach ($parties as $party) {
+
             $rows = $partyStats->where(
                 'political_party_id',
                 $party->id
             );
 
             $partySummary[] = [
+
                 'id' => $party->id,
+
                 'name' => $party->name,
+
                 'short_name' => $party->short_name,
+
                 'symbol' => $party->symbol,
+
                 'color' => $party->color,
+
+                /*
+                |--------------------------------------------------------------------------
+                | Total
+                |--------------------------------------------------------------------------
+                */
 
                 'total' => $rows->sum('total'),
 
-                'strong_congress' => $this->supportCount(
+                /*
+                |--------------------------------------------------------------------------
+                | Support
+                |--------------------------------------------------------------------------
+                */
+
+                'strong_support' => $this->supportCount(
                     $rows,
-                    'Strong Congress'
+                    'Strong Support'
                 ),
 
-                'congress_leaning' => $this->supportCount(
+                'moderate_support' => $this->supportCount(
                     $rows,
-                    'Congress Leaning'
+                    'Moderate Support'
                 ),
+
+                'leaning_support' => $this->supportCount(
+                    $rows,
+                    'Leaning Support'
+                ),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Neutral / Undecided
+                |--------------------------------------------------------------------------
+                */
 
                 'neutral' => $this->supportCount(
                     $rows,
@@ -135,24 +203,37 @@ class BoothDashboardService
                     'Undecided'
                 ),
 
-                'bjp_leaning' => $this->supportCount(
+                /*
+                |--------------------------------------------------------------------------
+                | Opposition
+                |--------------------------------------------------------------------------
+                */
+
+                'leaning_opposition' => $this->supportCount(
                     $rows,
-                    'BJP Leaning'
+                    'Leaning Opposition'
                 ),
 
-                'strong_bjp' => $this->supportCount(
+                'moderate_opposition' => $this->supportCount(
                     $rows,
-                    'Strong BJP'
+                    'Moderate Opposition'
                 ),
 
-                'other' => $this->supportCount(
+                'strong_opposition' => $this->supportCount(
                     $rows,
-                    'Other'
+                    'Strong Opposition'
                 ),
             ];
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | Final Summary
+        |--------------------------------------------------------------------------
+        */
+
         return [
+
             'houses' => $booth->houses()->count(),
 
             'voters' => (int) ($stats->total ?? 0),
@@ -176,6 +257,12 @@ class BoothDashboardService
             'parties' => $partySummary,
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Support Level Counter
+    |--------------------------------------------------------------------------
+    */
 
     protected function supportCount(
         $rows,

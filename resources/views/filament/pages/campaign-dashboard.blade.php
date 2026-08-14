@@ -82,33 +82,75 @@
         $constituencyDashboardUrl = url('/admin/constituency-dashboard');
         $villageDashboardUrl = url('/admin/village-dashboard');
         $boothDashboardUrl = url('/admin/booth-dashboard');
-
     @endphp
 
 
     <style>
+
+        /* ============================================================
+           MAIN DASHBOARD
+        ============================================================ */
+
         .command-center {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
+
+        /* ============================================================
+           HERO / COMMAND HEADER
+        ============================================================ */
+
         .command-header {
-            border: 1px solid rgba(75, 85, 99, .45);
-            border-radius: 16px;
-            padding: 24px;
+            position: relative;
+            overflow: hidden;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+
+            padding: 28px;
+
             background:
                 linear-gradient(
                     135deg,
-                    rgba(31, 41, 55, .72),
-                    rgba(17, 24, 39, .58)
+                    #ffffff 0%,
+                    #f8faff 55%,
+                    #f4f1ff 100%
+                );
+
+            box-shadow:
+                0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .command-header::before {
+            content: '';
+
+            position: absolute;
+
+            top: -80px;
+            right: -80px;
+
+            width: 220px;
+            height: 220px;
+
+            border-radius: 999px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(99, 102, 241, 0.12),
+                    transparent 70%
                 );
         }
 
         .command-header-top {
+            position: relative;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 20px;
         }
 
@@ -116,85 +158,197 @@
             font-size: 28px;
             font-weight: 800;
             line-height: 1.2;
+
+            color: #111827;
+            letter-spacing: -0.02em;
         }
 
         .command-subtitle {
-            margin-top: 6px;
+            margin-top: 7px;
+
             font-size: 14px;
-            color: rgb(156 163 175);
+
+            color: #6b7280;
         }
 
+        .command-header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 8px 12px;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+
+            background: #ffffff;
+
+            color: #4b5563;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        }
+
+        .command-header-dot {
+            width: 8px;
+            height: 8px;
+
+            border-radius: 999px;
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
+        }
+
+
+        /* ============================================================
+           HEADER PILLS
+        ============================================================ */
+
         .command-pills {
+            position: relative;
+
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 18px;
+
+            gap: 9px;
+
+            margin-top: 20px;
         }
 
         .command-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            border: 1px solid rgba(107, 114, 128, .45);
-            background: rgba(39, 39, 42, .72);
+
+            border: 1px solid #e5e7eb;
+
+            background: rgba(255, 255, 255, 0.9);
+
             border-radius: 999px;
-            padding: 7px 12px;
+
+            padding: 8px 13px;
+
             font-size: 12px;
-            color: rgb(229 231 235);
+            font-weight: 600;
+
+            color: #374151;
+
+            box-shadow:
+                0 2px 7px rgba(15, 23, 42, 0.04);
         }
 
+
+        /* ============================================================
+           SECTIONS
+        ============================================================ */
+
         .command-section {
-            border: 1px solid rgba(75, 85, 99, .42);
-            border-radius: 16px;
             overflow: hidden;
-            background: rgba(24, 24, 27, .58);
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 16px;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 5px 18px rgba(15, 23, 42, 0.045);
         }
 
         .command-section-header {
-            padding: 17px 20px;
-            border-bottom: 1px solid rgba(75, 85, 99, .35);
+            padding: 18px 20px;
+
+            border-bottom: 1px solid #eef0f3;
+
+            background:
+                linear-gradient(
+                    to right,
+                    #ffffff,
+                    #fafbfc
+                );
         }
 
         .command-section-title {
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 750;
+
+            color: #111827;
         }
 
         .command-section-description {
-            margin-top: 3px;
+            margin-top: 4px;
+
             font-size: 12px;
-            color: rgb(156 163 175);
+
+            color: #6b7280;
         }
+
+
+        /* ============================================================
+           GRIDS
+        ============================================================ */
 
         .command-grid {
             display: grid;
-            gap: 12px;
-            padding: 14px;
+
+            gap: 14px;
+
+            padding: 15px;
         }
 
         .command-grid-5 {
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
         }
 
         .command-grid-4 {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
         }
 
         .command-grid-3 {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
         }
 
+
+        /* ============================================================
+           STANDARD CARDS
+        ============================================================ */
+
         .command-card {
-            border: 1px solid rgba(75, 85, 99, .38);
-            border-radius: 12px;
+            position: relative;
+
+            min-width: 0;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 13px;
+
             padding: 18px;
-            background: rgba(24, 24, 27, .68);
-            transition: transform .15s ease, border-color .15s ease;
+
+            background: #ffffff;
+
+            box-shadow:
+                0 2px 7px rgba(15, 23, 42, 0.025);
+
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease,
+                border-color .18s ease;
         }
 
         .command-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(156, 163, 175, .55);
+
+            border-color: #d1d5db;
+
+            box-shadow:
+                0 8px 20px rgba(15, 23, 42, 0.07);
         }
 
         .command-card-icon {
@@ -204,52 +358,75 @@
 
         .command-card-label {
             margin-top: 12px;
+
             font-size: 13px;
-            color: rgb(156 163 175);
+            font-weight: 500;
+
+            color: #6b7280;
         }
 
         .command-card-number {
             margin-top: 5px;
+
             font-size: 28px;
             font-weight: 800;
+
             line-height: 1.15;
+
+            color: #111827;
         }
 
         .command-card-description {
             margin-top: 6px;
+
             font-size: 11px;
-            color: rgb(156 163 175);
+
+            color: #9ca3af;
         }
 
+
+        /* ============================================================
+           CAMPAIGN INTELLIGENCE
+        ============================================================ */
+
         .command-intelligence {
-            position: relative;
             overflow: hidden;
+
+            padding-bottom: 21px;
         }
 
         .command-intelligence::after {
             content: '';
+
             position: absolute;
+
             left: 0;
             right: 0;
             bottom: 0;
+
             height: 3px;
         }
 
         .intelligence-volunteer::after {
-            background: rgb(34 197 94);
+            background: #22c55e;
         }
 
         .intelligence-influencer::after {
-            background: rgb(234 179 8);
+            background: #f59e0b;
         }
 
         .intelligence-neutral::after {
-            background: rgb(249 115 22);
+            background: #f97316;
         }
 
         .intelligence-undecided::after {
-            background: rgb(239 68 68);
+            background: #ef4444;
         }
+
+
+        /* ============================================================
+           HEALTH CARDS
+        ============================================================ */
 
         .health-card {
             min-height: 150px;
@@ -257,36 +434,75 @@
 
         .health-row {
             display: flex;
+
             align-items: center;
             justify-content: space-between;
+
             gap: 12px;
+        }
+
+        .health-percentage {
+            font-size: 13px;
+            font-weight: 700;
+
+            color: #6366f1;
         }
 
         .health-progress {
             height: 7px;
+
             margin-top: 18px;
+
             overflow: hidden;
+
             border-radius: 999px;
-            background: rgb(55 65 81);
+
+            background: #eef2f7;
         }
 
         .health-progress-fill {
             height: 100%;
+
             border-radius: inherit;
-            background: rgb(34 197 94);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #22c55e,
+                    #16a34a
+                );
         }
 
         .health-progress-neutral {
-            background: rgb(75 85 99);
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #6366f1,
+                    #8b5cf6
+                );
         }
+
+
+        /* ============================================================
+           QUICK ACCESS
+        ============================================================ */
 
         .quick-card {
             display: flex;
+
             align-items: center;
             justify-content: space-between;
+
             gap: 14px;
-            min-height: 90px;
+
+            min-height: 92px;
+
             text-decoration: none;
+
             color: inherit;
         }
 
@@ -296,92 +512,182 @@
 
         .quick-left {
             display: flex;
+
             align-items: center;
+
             gap: 14px;
+
             min-width: 0;
         }
 
         .quick-icon {
-            width: 42px;
-            height: 42px;
-            flex: 0 0 42px;
+            width: 44px;
+            height: 44px;
+
+            flex: 0 0 44px;
+
             display: flex;
+
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
+
+            border-radius: 11px;
+
             font-size: 22px;
-            background: rgba(55, 65, 81, .45);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #f3f4ff,
+                    #eef2ff
+                );
+
+            border: 1px solid #e0e7ff;
         }
 
         .quick-title {
             font-size: 14px;
             font-weight: 700;
+
+            color: #111827;
         }
 
         .quick-description {
             margin-top: 4px;
+
             font-size: 11px;
-            color: rgb(156 163 175);
+
+            color: #6b7280;
         }
 
         .quick-arrow {
             font-size: 20px;
-            color: rgb(156 163 175);
+
+            color: #9ca3af;
+
+            transition:
+                transform .18s ease,
+                color .18s ease;
         }
 
+        .quick-card:hover .quick-arrow {
+            transform: translateX(3px);
+
+            color: #6366f1;
+        }
+
+
+        /* ============================================================
+           SYSTEM STATUS
+        ============================================================ */
+
         .system-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
+
+            flex: 0 0 10px;
+
             border-radius: 999px;
-            background: rgb(34 197 94);
-            box-shadow: 0 0 10px rgba(34, 197, 94, .65);
+
+            background: #22c55e;
+
+            box-shadow:
+                0 0 0 4px rgba(34, 197, 94, 0.10);
         }
 
         .system-status {
             display: flex;
+
             align-items: center;
             justify-content: space-between;
+
             gap: 12px;
         }
 
         .system-left {
             display: flex;
+
             align-items: center;
+
             gap: 12px;
         }
 
+
+        /* ============================================================
+           PARTY SNAPSHOT
+        ============================================================ */
+
         .party-row {
             display: flex;
+
             align-items: center;
             justify-content: space-between;
+
             gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(75, 85, 99, .3);
+
+            padding: 2px 0 10px;
+
+            border-bottom: 1px solid #eef0f3;
         }
 
         .party-row:last-child {
             border-bottom: 0;
+            padding-bottom: 0;
         }
+
+        .party-name {
+            color: #111827;
+        }
+
+        .party-full-name {
+            margin-top: 4px;
+
+            font-size: 11px;
+
+            color: #9ca3af;
+        }
+
+        .party-count {
+            font-size: 24px;
+            font-weight: 800;
+
+            color: #111827;
+        }
+
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
 
         @media (max-width: 1200px) {
+
             .command-grid-5 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
             }
+
         }
 
+
         @media (max-width: 900px) {
+
             .command-grid-4,
             .command-grid-3 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
             }
 
             .command-header-top {
                 flex-direction: column;
+
                 align-items: flex-start;
             }
+
         }
 
+
         @media (max-width: 640px) {
+
             .command-grid-5,
             .command-grid-4,
             .command-grid-3 {
@@ -391,16 +697,30 @@
             .command-title {
                 font-size: 22px;
             }
+
+            .command-header {
+                padding: 20px;
+            }
+
+            .command-section-header {
+                padding: 16px;
+            }
+
+            .command-grid {
+                padding: 12px;
+            }
+
         }
+
     </style>
 
 
     <div class="command-center">
 
 
-        {{-- ============================================================= --}}
-        {{-- HEADER --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             HEADER
+        ============================================================= --}}
 
         <div class="command-header">
 
@@ -418,11 +738,16 @@
 
                 </div>
 
-                <div class="text-sm text-gray-500">
+                <div class="command-header-status">
+
+                    <span class="command-header-dot"></span>
+
                     Campaign Intelligence
+
                 </div>
 
             </div>
+
 
             <div class="command-pills">
 
@@ -447,9 +772,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- CAMPAIGN COVERAGE --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             CAMPAIGN COVERAGE
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -464,6 +789,7 @@
                 </div>
 
             </div>
+
 
             <div class="command-grid command-grid-5">
 
@@ -502,9 +828,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- CAMPAIGN INTELLIGENCE --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             CAMPAIGN INTELLIGENCE
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -519,6 +845,7 @@
                 </div>
 
             </div>
+
 
             <div class="command-grid command-grid-4">
 
@@ -610,9 +937,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- DATABASE & SURVEY HEALTH --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             DATABASE & SURVEY HEALTH
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -628,8 +955,11 @@
 
             </div>
 
+
             <div class="command-grid command-grid-3">
 
+
+                {{-- Active Voters --}}
 
                 <div class="command-card health-card">
 
@@ -637,7 +967,10 @@
 
                         <div>
 
-                            <div class="command-card-label" style="margin-top:0;">
+                            <div
+                                class="command-card-label"
+                                style="margin-top:0;"
+                            >
                                 👥 Active Voters
                             </div>
 
@@ -647,15 +980,17 @@
 
                         </div>
 
-                        <div class="text-sm text-gray-400">
+                        <div class="health-percentage">
                             {{ $activeVoterPercentage }}%
                         </div>
 
                     </div>
 
+
                     <div class="command-card-description">
                         {{ $activeVoterPercentage }}% of total voters
                     </div>
+
 
                     <div class="health-progress">
 
@@ -669,9 +1004,14 @@
                 </div>
 
 
+                {{-- Surveys --}}
+
                 <div class="command-card health-card">
 
-                    <div class="command-card-label" style="margin-top:0;">
+                    <div
+                        class="command-card-label"
+                        style="margin-top:0;"
+                    >
                         📋 Surveys
                     </div>
 
@@ -683,11 +1023,14 @@
                         Active survey definitions
                     </div>
 
+
                     <div class="health-progress">
 
                         <div
                             class="health-progress-neutral"
-                            style="width: {{ $surveys > 0 ? '100' : '0' }}%;"
+                            style="
+                                width: {{ $surveys > 0 ? '100' : '0' }}%;
+                            "
                         ></div>
 
                     </div>
@@ -695,9 +1038,14 @@
                 </div>
 
 
+                {{-- Survey Responses --}}
+
                 <div class="command-card health-card">
 
-                    <div class="command-card-label" style="margin-top:0;">
+                    <div
+                        class="command-card-label"
+                        style="margin-top:0;"
+                    >
                         📝 Survey Responses
                     </div>
 
@@ -709,11 +1057,14 @@
                         {{ $responsePercentage }} responses per 100 voters
                     </div>
 
+
                     <div class="health-progress">
 
                         <div
                             class="health-progress-neutral"
-                            style="width: {{ min(100, $responsePercentage) }}%;"
+                            style="
+                                width: {{ min(100, $responsePercentage) }}%;
+                            "
                         ></div>
 
                     </div>
@@ -725,9 +1076,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- QUICK ACCESS --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             QUICK ACCESS
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -742,6 +1093,7 @@
                 </div>
 
             </div>
+
 
             <div class="command-grid command-grid-4">
 
@@ -782,6 +1134,7 @@
 
                         </div>
 
+
                         <div class="quick-arrow">
                             →
                         </div>
@@ -795,9 +1148,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- PARTY SNAPSHOT --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             PARTY SNAPSHOT
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -813,16 +1166,20 @@
 
             </div>
 
+
             <div class="command-grid command-grid-4">
 
                 @forelse ($parties as $party)
 
                     @php
+
                         $partyCount = \App\Models\Voter::where(
                             'political_party_id',
                             $party->id
                         )->count();
+
                     @endphp
+
 
                     <div class="command-card">
 
@@ -830,21 +1187,23 @@
                             {{ $party->symbol ?: '🏛️' }}
                         </div>
 
+
                         <div class="party-row">
 
                             <div>
 
-                                <div class="font-semibold">
+                                <div class="party-name font-semibold">
                                     {{ $party->short_name }}
                                 </div>
 
-                                <div class="text-xs text-gray-500 mt-1">
+                                <div class="party-full-name">
                                     {{ $party->name }}
                                 </div>
 
                             </div>
 
-                            <div class="text-2xl font-bold">
+
+                            <div class="party-count">
                                 {{ number_format($partyCount) }}
                             </div>
 
@@ -865,9 +1224,9 @@
         </div>
 
 
-        {{-- ============================================================= --}}
-        {{-- SYSTEM STATUS --}}
-        {{-- ============================================================= --}}
+        {{-- ============================================================
+             SYSTEM STATUS
+        ============================================================= --}}
 
         <div class="command-section">
 
@@ -882,6 +1241,7 @@
                 </div>
 
             </div>
+
 
             <div class="command-grid command-grid-4">
 
@@ -905,7 +1265,10 @@
 
                                 <div>
 
-                                    <div class="font-semibold">
+                                    <div
+                                        class="font-semibold"
+                                        style="color:#111827;"
+                                    >
                                         {{ $system[1] }}
                                     </div>
 
@@ -916,6 +1279,7 @@
                                 </div>
 
                             </div>
+
 
                             <div class="system-dot"></div>
 

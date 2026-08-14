@@ -57,6 +57,30 @@ class VillageDashboardService
                 ->where('support_level', 'Undecided')
                 ->count(),
 
+            'strong_support' => (clone $query)
+                ->where('support_level', 'Strong Support')
+                ->count(),
+
+            'moderate_support' => (clone $query)
+                ->where('support_level', 'Moderate Support')
+                ->count(),
+
+            'leaning_support' => (clone $query)
+                ->where('support_level', 'Leaning Support')
+                ->count(),
+
+            'leaning_opposition' => (clone $query)
+                ->where('support_level', 'Leaning Opposition')
+                ->count(),
+
+            'moderate_opposition' => (clone $query)
+                ->where('support_level', 'Moderate Opposition')
+                ->count(),
+
+            'strong_opposition' => (clone $query)
+                ->where('support_level', 'Strong Opposition')
+                ->count(),
+
             'parties' => [],
         ];
 
@@ -80,14 +104,20 @@ class VillageDashboardService
 
                 'symbol' => $party->symbol,
 
+                'color' => $party->color,
+
                 'total' => (clone $partyQuery)->count(),
 
-                'strong_congress' => (clone $partyQuery)
-                    ->where('support_level', 'Strong Congress')
+                'strong_support' => (clone $partyQuery)
+                    ->where('support_level', 'Strong Support')
                     ->count(),
 
-                'congress_leaning' => (clone $partyQuery)
-                    ->where('support_level', 'Congress Leaning')
+                'moderate_support' => (clone $partyQuery)
+                    ->where('support_level', 'Moderate Support')
+                    ->count(),
+
+                'leaning_support' => (clone $partyQuery)
+                    ->where('support_level', 'Leaning Support')
                     ->count(),
 
                 'neutral' => (clone $partyQuery)
@@ -98,16 +128,16 @@ class VillageDashboardService
                     ->where('support_level', 'Undecided')
                     ->count(),
 
-                'bjp_leaning' => (clone $partyQuery)
-                    ->where('support_level', 'BJP Leaning')
+                'leaning_opposition' => (clone $partyQuery)
+                    ->where('support_level', 'Leaning Opposition')
                     ->count(),
 
-                'strong_bjp' => (clone $partyQuery)
-                    ->where('support_level', 'Strong BJP')
+                'moderate_opposition' => (clone $partyQuery)
+                    ->where('support_level', 'Moderate Opposition')
                     ->count(),
 
-                'other' => (clone $partyQuery)
-                    ->where('support_level', 'Other')
+                'strong_opposition' => (clone $partyQuery)
+                    ->where('support_level', 'Strong Opposition')
                     ->count(),
             ];
         }

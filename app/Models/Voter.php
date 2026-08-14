@@ -80,13 +80,19 @@ class Voter extends Model
     protected $casts = [
 
         'dob' => 'date',
+
         'last_contact_date' => 'date',
+
         'next_followup' => 'date',
 
         'is_influencer' => 'boolean',
+
         'is_volunteer' => 'boolean',
+
         'disability' => 'boolean',
+
         'government_scheme' => 'boolean',
+
         'is_active' => 'boolean',
     ];
 
@@ -103,7 +109,10 @@ class Voter extends Model
 
     public function politicalParty()
     {
-        return $this->belongsTo(PoliticalParty::class);
+        return $this->belongsTo(
+            PoliticalParty::class,
+            'political_party_id'
+        );
     }
 
     public function booth()
@@ -159,17 +168,19 @@ class Voter extends Model
 
             'Strong Support' => 'success',
 
-            'Support' => 'success',
+            'Moderate Support' => 'success',
 
-            'Leaning' => 'info',
+            'Leaning Support' => 'info',
 
             'Neutral' => 'gray',
 
-            'Opposition Leaning' => 'warning',
+            'Undecided' => 'warning',
+
+            'Leaning Opposition' => 'warning',
+
+            'Moderate Opposition' => 'danger',
 
             'Strong Opposition' => 'danger',
-
-            'Undecided' => 'warning',
 
             default => 'gray',
         };

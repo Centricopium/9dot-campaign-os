@@ -67,14 +67,25 @@ class VillageDashboard extends Page
             'houses' => 0,
             'booths' => 0,
             'voters' => 0,
+
             'male' => 0,
             'female' => 0,
             'other' => 0,
+
             'volunteers' => 0,
             'influencers' => 0,
+
             'active_voters' => 0,
+
+            'strong_support' => 0,
+            'moderate_support' => 0,
+            'leaning_support' => 0,
             'neutral' => 0,
             'undecided' => 0,
+            'leaning_opposition' => 0,
+            'moderate_opposition' => 0,
+            'strong_opposition' => 0,
+
             'parties' => [],
         ];
     }

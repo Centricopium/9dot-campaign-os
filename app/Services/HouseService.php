@@ -14,64 +14,97 @@ class HouseService
         ])->find($houseId);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Political Intelligence
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    | Political Intelligence must use the same support_level values
+    | used by the Voter, Booth, Village and Constituency dashboards.
+    |
+    */
+
     public function getPoliticalSummary(House $house): array
     {
+        $voters = $house->voters;
+
         return [
-            'strong_congress' => $house->voters()
-                ->where('support_level', 'Strong Congress')
+
+            'strong_support' => $voters
+                ->where('support_level', 'Strong Support')
                 ->count(),
 
-            'congress_leaning' => $house->voters()
-                ->where('support_level', 'Congress Leaning')
+            'moderate_support' => $voters
+                ->where('support_level', 'Moderate Support')
                 ->count(),
 
-            'neutral' => $house->voters()
+            'leaning_support' => $voters
+                ->where('support_level', 'Leaning Support')
+                ->count(),
+
+            'neutral' => $voters
                 ->where('support_level', 'Neutral')
                 ->count(),
 
-            'undecided' => $house->voters()
+            'undecided' => $voters
                 ->where('support_level', 'Undecided')
                 ->count(),
 
-            'bjp_leaning' => $house->voters()
-                ->where('support_level', 'BJP Leaning')
+            'leaning_opposition' => $voters
+                ->where('support_level', 'Leaning Opposition')
                 ->count(),
 
-            'strong_bjp' => $house->voters()
-                ->where('support_level', 'Strong BJP')
+            'moderate_opposition' => $voters
+                ->where('support_level', 'Moderate Opposition')
                 ->count(),
 
-            'other' => $house->voters()
-                ->where('support_level', 'Other')
+            'strong_opposition' => $voters
+                ->where('support_level', 'Strong Opposition')
                 ->count(),
+
+            'total_voters' => $voters->count(),
         ];
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Political Party Summary
+    |--------------------------------------------------------------------------
+    */
+
     public function getPartySummary(House $house): array
     {
-        return $house->voters()
-            ->with('politicalParty')
-            ->get()
+        return $house->voters
             ->groupBy('political_party_id')
             ->map(function ($voters) {
 
                 $party = $voters->first()?->politicalParty;
 
                 return [
+
                     'party_id' => $party?->id,
 
                     'party_name' => $party?->name ?? 'Unknown',
 
                     'short_name' => $party?->short_name ?? '-',
 
+                    'symbol' => $party?->symbol ?? null,
+
+                    'color' => $party?->color ?? null,
+
                     'total' => $voters->count(),
 
-                    'strong_congress' => $voters
-                        ->where('support_level', 'Strong Congress')
+                    'strong_support' => $voters
+                        ->where('support_level', 'Strong Support')
                         ->count(),
 
-                    'congress_leaning' => $voters
-                        ->where('support_level', 'Congress Leaning')
+                    'moderate_support' => $voters
+                        ->where('support_level', 'Moderate Support')
+                        ->count(),
+
+                    'leaning_support' => $voters
+                        ->where('support_level', 'Leaning Support')
                         ->count(),
 
                     'neutral' => $voters
@@ -82,22 +115,28 @@ class HouseService
                         ->where('support_level', 'Undecided')
                         ->count(),
 
-                    'bjp_leaning' => $voters
-                        ->where('support_level', 'BJP Leaning')
+                    'leaning_opposition' => $voters
+                        ->where('support_level', 'Leaning Opposition')
                         ->count(),
 
-                    'strong_bjp' => $voters
-                        ->where('support_level', 'Strong BJP')
+                    'moderate_opposition' => $voters
+                        ->where('support_level', 'Moderate Opposition')
                         ->count(),
 
-                    'other' => $voters
-                        ->where('support_level', 'Other')
+                    'strong_opposition' => $voters
+                        ->where('support_level', 'Strong Opposition')
                         ->count(),
                 ];
             })
             ->values()
             ->toArray();
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Family / Household Voter Count
+    |--------------------------------------------------------------------------
+    */
 
     public function getFamilyCount(House $house): int
     {

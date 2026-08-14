@@ -18,8 +18,17 @@ class PoliticalParty extends Model
         'is_active' => 'boolean',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
     public function voters()
     {
-        return $this->hasMany(Voter::class, 'party_id');
+        return $this->hasMany(
+            Voter::class,
+            'political_party_id'
+        );
     }
 }
