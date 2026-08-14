@@ -26,6 +26,7 @@ class SurveyRunner extends Page
 
     protected string $view = 'filament.pages.survey-runner';
 
+
     public string $search = '';
 
     public ?int $surveyId = null;
@@ -40,6 +41,7 @@ class SurveyRunner extends Page
 
     public $answers = [];
 
+
     public function searchHouse(): void
     {
         $this->house = House::query()
@@ -48,19 +50,31 @@ class SurveyRunner extends Page
             ->orWhere('mobile', $this->search)
             ->first();
 
+
         if ($this->house) {
-            $this->voters = Voter::where('house_id', $this->house->id)->get();
+
+            $this->voters = Voter::where('house_id', $this->house->id)
+                ->get();
+
         } else {
+
             $this->voters = [];
+
         }
 
+
         $this->selectedVoter = null;
+
         $this->questions = [];
+
         $this->answers = [];
     }
 
+
+
     public function startSurvey(int $voterId): void
     {
+
         if (! $this->surveyId) {
 
             Notification::make()
@@ -69,46 +83,112 @@ class SurveyRunner extends Page
                 ->send();
 
             return;
+
         }
+
 
         $this->selectedVoter = Voter::find($voterId);
 
-        $survey = Survey::with('questions')->find($this->surveyId);
+
+        $survey = Survey::with('questions')
+            ->find($this->surveyId);
+
 
         $this->questions = $survey?->questions ?? [];
 
+
+        /*
+         |--------------------------------------------------------------------------
+         | Initialize Answers
+         |--------------------------------------------------------------------------
+         |
+         | Checkbox questions require array values.
+         | Other question types require single value.
+         |
+         */
+
         $this->answers = [];
+
+
+        foreach ($this->questions as $question) {
+
+
+            if ($question->type === 'checkbox') {
+
+
+                $this->answers[$question->id] = [];
+
+
+            } else {
+
+
+                $this->answers[$question->id] = null;
+
+
+            }
+
+        }
+
     }
+
+
+
 
     public function saveSurvey(SurveyService $service): void
     {
+
         if (! $this->selectedVoter || ! $this->surveyId) {
+
 
             Notification::make()
                 ->title('Please select Survey and Voter.')
                 ->danger()
                 ->send();
 
+
             return;
+
         }
 
+
+
         $service->save(
+
             surveyId: $this->surveyId,
+
             voterId: $this->selectedVoter->id,
+
             houseId: $this->selectedVoter->house_id,
+
             userId: auth()->id(),
+
             answers: $this->answers,
+
         );
 
+
+
         Notification::make()
+
             ->title('Survey Saved Successfully')
+
             ->success()
+
             ->send();
 
+
+
         $this->selectedVoter = null;
+
         $this->questions = [];
+
         $this->answers = [];
+
     }
+
+
+
+
 
     public function getSurveysProperty()
     {
