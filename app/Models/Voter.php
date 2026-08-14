@@ -77,6 +77,7 @@ class Voter extends Model
         'is_active',
     ];
 
+
     protected $casts = [
 
         'dob' => 'date',
@@ -94,7 +95,9 @@ class Voter extends Model
         'government_scheme' => 'boolean',
 
         'is_active' => 'boolean',
+
     ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -102,10 +105,15 @@ class Voter extends Model
     |--------------------------------------------------------------------------
     */
 
+
     public function house()
     {
-        return $this->belongsTo(House::class);
+        return $this->belongsTo(
+            House::class,
+            'house_id'
+        );
     }
+
 
     public function politicalParty()
     {
@@ -115,41 +123,7 @@ class Voter extends Model
         );
     }
 
-    public function booth()
-    {
-        return $this->hasOneThrough(
-            Booth::class,
-            House::class,
-            'id',
-            'id',
-            'house_id',
-            'booth_id'
-        );
-    }
 
-    public function village()
-    {
-        return $this->hasOneThrough(
-            Village::class,
-            House::class,
-            'id',
-            'id',
-            'house_id',
-            'village_id'
-        );
-    }
-
-    public function constituency()
-    {
-        return $this->hasOneThrough(
-            Constituency::class,
-            House::class,
-            'id',
-            'id',
-            'house_id',
-            'constituency_id'
-        );
-    }
 
     /*
     |--------------------------------------------------------------------------
@@ -157,10 +131,13 @@ class Voter extends Model
     |--------------------------------------------------------------------------
     */
 
+
     public function getDisplayNameAttribute(): string
     {
         return "{$this->name} ({$this->epic_no})";
     }
+
+
 
     public function getSupportBadgeColorAttribute(): string
     {
@@ -183,6 +160,7 @@ class Voter extends Model
             'Strong Opposition' => 'danger',
 
             default => 'gray',
+
         };
     }
 }
