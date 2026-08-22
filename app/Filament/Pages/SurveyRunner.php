@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\AuthorizesPagePermission;
 use App\Models\House;
 use App\Models\Survey;
 use App\Models\Voter;
@@ -14,6 +15,8 @@ use UnitEnum;
 
 class SurveyRunner extends Page
 {
+    use AuthorizesPagePermission;
+    protected static string $requiredPermission = 'survey.create';
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
     protected static ?string $navigationLabel = 'Survey Runner';

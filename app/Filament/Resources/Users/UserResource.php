@@ -109,6 +109,14 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery();
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        if ($user?->isAssemblyAdmin() && ! $user->isSuperAdmin()) {
+            $query->where('constituency_id', $user->constituency_id)
+                ->where('is_super_admin', false);
+        }
+
+        return $query;
     }
 }

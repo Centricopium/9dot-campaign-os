@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
 
 class PermissionsSeeder extends Seeder
 {
@@ -88,6 +88,69 @@ class PermissionsSeeder extends Seeder
             */
             'report.view',
             'report.export',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Candidate Selection
+            |--------------------------------------------------------------------------
+            */
+            'candidate.view',
+            'candidate.create',
+            'candidate.update',
+            'candidate.delete',
+            'candidate.approve',
+            'candidate_assessment.view',
+            'candidate_assessment.create',
+            'candidate_assessment.update',
+            'candidate_assessment.delete',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Campaign Field Operations
+            |--------------------------------------------------------------------------
+            */
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
+            'campaign_task.delete',
+            'campaign_task.assign',
+            'campaign_task.review',
+            'campaign_issue.view',
+            'campaign_issue.create',
+            'campaign_issue.update',
+            'campaign_issue.delete',
+            'campaign_issue.assign',
+            'campaign_issue.resolve',
+            'war_room.view',
+            'war_room.manage',
+            'war_room.review',
+            'audit.view',
+            'audit.export',
+            'security.manage',
+            'backup.view',
+            'backup.create',
+            'backup.restore',
+            'campaign_event.view',
+            'campaign_event.create',
+            'campaign_event.update',
+            'campaign_event.delete',
+            'campaign_event.manage_team',
+            'campaign_event.export',
+            'campaign_finance.view',
+            'campaign_finance.create',
+            'campaign_finance.update',
+            'campaign_finance.delete',
+            'campaign_finance.approve',
+            'campaign_communication.view',
+            'campaign_communication.create',
+            'campaign_communication.update',
+            'campaign_communication.delete',
+            'campaign_communication.approve',
+            'campaign_communication.publish',
+            'internal_message.view',
+            'internal_message.send',
+            'internal_message.broadcast',
+            'internal_message.moderate',
 
             /*
             |--------------------------------------------------------------------------

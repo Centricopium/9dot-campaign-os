@@ -2,15 +2,15 @@
 
 namespace App\Filament\Pages;
 
-use App\Imports\VotersImport;
+use App\Jobs\ProcessVoterImport;
 use App\Models\Constituency;
+use App\Models\VoterImportBatch;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\WithFileUploads;
-use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
 
 class ImportCentre extends Page
@@ -112,33 +112,16 @@ class ImportCentre extends Page
         ]);
 
         try {
-            $import = new VotersImport(
-                $this->constituencyId
-            );
+            $path = $this->voterFile->store('imports/voters', 'local');
 
-            Excel::import(
-                $import,
-                $this->voterFile->getRealPath()
-            );
-
-            $message = "Imported: {$import->imported} voters";
-
-            if ($import->skipped > 0) {
-                $message .= " | Skipped: {$import->skipped}";
-            }
+            $batch = VoterImportBatch::create(['constituency_id' => (int) $this->constituencyId, 'user_id' => auth()->id(), 'file_name' => $this->voterFile->getClientOriginalName(), 'file_path' => $path, 'status' => 'Queued']);
+            ProcessVoterImport::dispatch($path, (int) $this->constituencyId, $batch->id);
 
             Notification::make()
-                ->title('Voter Import Completed')
-                ->body($message)
+                ->title('Voter import queued')
+                ->body('The file will be processed in the background. Keep a queue worker running to complete the import.')
                 ->success()
                 ->send();
-
-            if (! empty($import->errors)) {
-                logger()->warning(
-                    'Voter Import Errors',
-                    $import->errors
-                );
-            }
 
             $this->reset('voterFile');
 

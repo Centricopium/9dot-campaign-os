@@ -19,6 +19,16 @@ class DatabaseSeeder extends Seeder
 
             RolePermissionSeeder::class,
 
+            CampaignTaskPermissionsSeeder::class,
+            CampaignIssuePermissionsSeeder::class,
+            WarRoomPermissionsSeeder::class,
+            SecurityAuditPermissionsSeeder::class,
+            BackupPermissionsSeeder::class,
+            CampaignEventPermissionsSeeder::class,
+            CampaignFinancePermissionsSeeder::class,
+            CampaignCommunicationPermissionsSeeder::class,
+            InternalMessagePermissionsSeeder::class,
+
             SuperAdminSeeder::class,
 
         ]);

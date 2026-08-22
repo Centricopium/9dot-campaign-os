@@ -11,7 +11,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class UsersTable
 {

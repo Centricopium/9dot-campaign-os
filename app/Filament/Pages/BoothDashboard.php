@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\AuthorizesPagePermission;
 use App\Models\Booth;
 use App\Services\Dashboard\BoothDashboardService;
 use BackedEnum;
@@ -11,6 +12,8 @@ use UnitEnum;
 
 class BoothDashboard extends Page
 {
+    use AuthorizesPagePermission;
+    protected static string $requiredPermission = 'dashboard.view';
     protected static string|BackedEnum|null $navigationIcon =
         Heroicon::OutlinedBuildingOffice2;
 

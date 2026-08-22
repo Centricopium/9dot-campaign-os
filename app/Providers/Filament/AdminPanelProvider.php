@@ -10,8 +10,10 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -33,10 +35,40 @@ class AdminPanelProvider extends PanelProvider
 
             ->brandName('9Dot Campaign OS')
             ->brandLogo(asset('images/9dot-logo.png'))
-            ->brandLogoHeight('2.5rem')
+            ->brandLogoHeight('3.25rem')
+
+            ->viteTheme('resources/css/filament/admin/theme.css')
+
+            ->darkMode(true)
+            ->themeSwitcher(true)
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): View => view('filament.components.theme-switcher'),
+            )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_BEFORE,
+                fn (): View => view('filament.components.theme-switcher'),
+            )
+            ->renderHook(
+                PanelsRenderHook::USER_MENU_BEFORE,
+                fn (): View => view('filament.components.internal-message-indicator'),
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_LOGO_AFTER,
+                fn (): View => view('filament.components.sidebar-brand-credit'),
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_LOGO_AFTER,
+                fn (): View => view('filament.components.sidebar-brand-credit'),
+            )
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_FOOTER,
+                fn (): View => view('filament.components.sidebar-copyright'),
+            )
 
             ->colors([
-                'primary' => Color::Violet,
+                'primary' => '#7c3aed',
+                'gray' => Color::Zinc,
             ])
 
             ->discoverResources(

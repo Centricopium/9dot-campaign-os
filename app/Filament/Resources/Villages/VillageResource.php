@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Villages;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\Villages\Pages\CreateVillage;
 use App\Filament\Resources\Villages\Pages\EditVillage;
 use App\Filament\Resources\Villages\Pages\ListVillages;
@@ -17,6 +18,8 @@ use Filament\Tables\Table;
 
 class VillageResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'village';
     protected static string|UnitEnum|null $navigationGroup = 'Masters';
     protected static ?int $navigationSort = 2;
     protected static ?string $model = Village::class;

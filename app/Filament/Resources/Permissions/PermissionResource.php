@@ -8,6 +8,7 @@ use App\Filament\Resources\Permissions\Pages\ListPermissions;
 use App\Filament\Resources\Permissions\Schemas\PermissionForm;
 use App\Filament\Resources\Permissions\Tables\PermissionsTable;
 use App\Models\Permission;
+use Illuminate\Database\Eloquent\Model;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -24,6 +25,12 @@ class PermissionResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function canViewAny(): bool { return auth()->user()?->can('permission.manage') ?? false; }
+    public static function canCreate(): bool { return auth()->user()?->can('permission.manage') ?? false; }
+    public static function canEdit(Model $record): bool { return auth()->user()?->can('permission.manage') ?? false; }
+    public static function canDelete(Model $record): bool { return auth()->user()?->can('permission.manage') ?? false; }
+    public static function canDeleteAny(): bool { return auth()->user()?->can('permission.manage') ?? false; }
 
     public static function form(Schema $schema): Schema
     {

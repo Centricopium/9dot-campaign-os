@@ -290,6 +290,98 @@
 }
 
 
+/* ============================================================
+   DARK MODE
+============================================================ */
+
+html.dark .si-card,
+html.dark .si-section {
+    border-color:rgba(168,85,247,.16);
+    background:linear-gradient(145deg,#1a1721,#15121b);
+    color:#f7f4fb;
+    box-shadow:0 16px 40px -30px rgba(168,85,247,.48);
+}
+
+html.dark .si-card:hover {
+    border-color:rgba(168,85,247,.44);
+    background:linear-gradient(145deg,#211a2b,#18131f);
+    box-shadow:0 20px 38px -26px rgba(168,85,247,.58);
+}
+
+html.dark .si-number,
+html.dark .si-section-title,
+html.dark .si-question-title,
+html.dark .si-table td,
+html.dark .si-answer-name,
+html.dark .si-answer-count {
+    color:#f7f4fb;
+}
+
+html.dark .si-label,
+html.dark .si-subtitle,
+html.dark .si-section-description,
+html.dark .si-question-meta,
+html.dark .si-muted,
+html.dark .si-empty {
+    color:#a8a1b3;
+}
+
+html.dark .si-section-header {
+    border-bottom-color:rgba(168,85,247,.14);
+    background:linear-gradient(110deg,#1a1622,#131019 65%);
+}
+
+html.dark .si-section-body {
+    background:#121018;
+}
+
+html.dark .si-select {
+    border-color:rgba(168,85,247,.22);
+    background:#100e15;
+    color:#f7f4fb;
+    color-scheme:dark;
+}
+
+html.dark .si-select:focus {
+    border-color:rgba(168,85,247,.72);
+    outline:none;
+    box-shadow:0 0 0 3px rgba(124,58,237,.14);
+}
+
+html.dark .si-table th {
+    border-bottom-color:rgba(168,85,247,.18);
+    background:#17131d;
+    color:#aaa2b5;
+}
+
+html.dark .si-table td {
+    border-bottom-color:rgba(168,85,247,.10);
+}
+
+html.dark .si-table tbody tr:hover {
+    background:rgba(124,58,237,.08);
+}
+
+html.dark .si-badge {
+    border:1px solid rgba(168,85,247,.18);
+    background:#211a29;
+    color:#d8d1e1;
+}
+
+html.dark .si-question {
+    border-color:rgba(168,85,247,.14);
+    background:linear-gradient(145deg,#1b1722,#15121b);
+}
+
+html.dark .si-bar {
+    background:#2a2431;
+}
+
+html.dark .si-bar-fill {
+    background:linear-gradient(90deg,#7c3aed,#a855f7);
+}
+
+
 @media(max-width:1100px){
 
 .si-grid-4 {

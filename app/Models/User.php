@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Booth;
-use App\Models\Constituency;
-use App\Models\Village;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -39,11 +40,11 @@ use Spatie\Permission\Traits\HasRoles;
     'remember_token',
 ])]
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory;
-    use Notifiable;
     use HasRoles;
+    use Notifiable;
 
     /**
      * Attribute Casts
@@ -82,6 +83,23 @@ class User extends Authenticatable
         return $this->belongsTo(Booth::class);
     }
 
+    public function assignedCampaignTasks(): HasMany
+    {
+        return $this->hasMany(CampaignTask::class, 'assigned_to');
+    }
+
+    public function internalConversations(): BelongsToMany
+    {
+        return $this->belongsToMany(InternalConversation::class, 'internal_conversation_participants')
+            ->withPivot(['joined_at', 'last_read_at', 'last_read_message_id', 'archived_at', 'muted_at'])
+            ->withTimestamps();
+    }
+
+    public function sentInternalMessages(): HasMany
+    {
+        return $this->hasMany(InternalMessage::class, 'sender_id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Helper Methods
@@ -90,7 +108,7 @@ class User extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return (bool) $this->is_super_admin;
+        return (bool) $this->is_super_admin || $this->hasRole('Super Admin');
     }
 
     public function isAssemblyAdmin(): bool
@@ -101,6 +119,11 @@ class User extends Authenticatable
     public function isBoothUser(): bool
     {
         return ! is_null($this->booth_id);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (bool) $this->is_active;
     }
 
     /*
@@ -124,6 +147,6 @@ class User extends Authenticatable
             return null;
         }
 
-        return asset('storage/' . $this->profile_photo);
+        return asset('storage/'.$this->profile_photo);
     }
 }

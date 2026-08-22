@@ -32,6 +32,17 @@ class BoothsTable
                     ->searchable()
                     ->sortable(),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Booth Name
+                |--------------------------------------------------------------------------
+                */
+
+                TextColumn::make('booth_name')
+                    ->label('Booth Name')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('total_voters')
                     ->label('Total Voters')
                     ->numeric(),

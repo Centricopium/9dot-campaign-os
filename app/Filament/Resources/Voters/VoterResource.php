@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Voters;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\Voters\Pages\CreateVoter;
 use App\Filament\Resources\Voters\Pages\EditVoter;
 use App\Filament\Resources\Voters\Pages\ListVoters;
@@ -20,6 +21,8 @@ use UnitEnum;
 
 class VoterResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'voter';
    
     protected static ?string $model = Voter::class;
 

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ScopedToAssemblyConstituency;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SurveyResponse extends Model
 {
+    use ScopedToAssemblyConstituency;
     protected $fillable = [
         'survey_id',
         'user_id',

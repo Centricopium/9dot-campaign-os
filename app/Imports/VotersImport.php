@@ -5,225 +5,216 @@ namespace App\Imports;
 use App\Models\Booth;
 use App\Models\House;
 use App\Models\Voter;
+use App\Models\VoterImportBatch;
+use App\Services\House\HouseHeadService;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Events\ImportFailed;
 
-class VotersImport implements ToCollection, WithHeadingRow
+class VotersImport implements ShouldQueue, ToCollection, WithChunkReading, WithEvents, WithHeadingRow
 {
+    use RegistersEventListeners;
+
+    private const MAX_RECORDED_ERRORS = 1_000;
+
     public int $imported = 0;
 
     public int $skipped = 0;
 
     public array $errors = [];
 
+    private array $houseIds = [];
+
+    private int $processedRows = 0;
+
+    public int $timeout = 900;
+
+    public int $tries = 2;
+
     public function __construct(
-        protected int $constituencyId
-    ) {
-    }
+        protected int $constituencyId,
+        protected ?string $sourcePath = null,
+        protected ?int $batchId = null,
+    ) {}
 
     public function collection(Collection $rows): void
     {
-        foreach ($rows as $index => $row) {
+        $beforeImported = $this->imported;
+        $beforeSkipped = $this->skipped;
+        $beforeErrors = count($this->errors);
+        $chunkStart = $this->processedRows + 2;
+        $this->processedRows += $rows->count();
 
-            $excelRow = $index + 2;
+        $partNumbers = $rows->pluck('part_no')->map(fn ($value) => trim((string) $value))->filter()->unique();
+        $booths = Booth::query()
+            ->whereIn('part_no', $partNumbers)
+            ->whereHas('village', fn ($query) => $query->where('constituency_id', $this->constituencyId))
+            ->get()
+            ->keyBy(fn (Booth $booth) => (string) $booth->part_no);
 
-            try {
+        $epicNumbers = $rows->pluck('idcard_no')->map(fn ($value) => strtoupper(trim((string) $value)))->filter()->unique();
+        $existingEpics = Voter::query()->whereIn('epic_no', $epicNumbers)->pluck('epic_no')->flip()->all();
+        $seenEpics = $existingEpics;
+        $serialNumbers = $rows->pluck('slnoinpart')->map(fn ($value) => trim((string) $value))->filter()->unique();
+        $seenSerials = Voter::query()
+            ->whereIn('part_no', $partNumbers)
+            ->whereIn('serial_no', $serialNumbers)
+            ->get(['part_no', 'serial_no'])
+            ->mapWithKeys(fn (Voter $voter) => [$voter->part_no.'|'.$voter->serial_no => true])
+            ->all();
+        $now = now();
+        $inserts = [];
 
-                DB::transaction(function () use ($row, $excelRow) {
+        DB::transaction(function () use ($rows, $chunkStart, $booths, &$seenEpics, &$seenSerials, &$inserts, $now): void {
+            foreach ($rows as $index => $row) {
+                $excelRow = $chunkStart + $index;
+                $partNo = trim((string) ($row['part_no'] ?? ''));
+                $houseNo = trim((string) ($row['house_no'] ?? ''));
+                $epicNo = strtoupper(trim((string) ($row['idcard_no'] ?? '')));
+                $serialNo = trim((string) ($row['slnoinpart'] ?? ''));
 
-                    $partNo = trim(
-                        (string) ($row['part_no'] ?? '')
-                    );
+                if ($partNo === '' || $houseNo === '') {
+                    $this->skip($excelRow, 'PART_NO or HOUSE_NO is missing.');
 
-                    $houseNo = trim(
-                        (string) ($row['house_no'] ?? '')
-                    );
+                    continue;
+                }
 
-                    $epicNo = trim(
-                        (string) ($row['idcard_no'] ?? '')
-                    );
+                $booth = $booths->get($partNo);
+                if (! $booth) {
+                    $this->skip($excelRow, "Booth not found in selected constituency for PART_NO: {$partNo}");
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Basic Validation
-                    |--------------------------------------------------------------------------
-                    */
+                    continue;
+                }
 
-                    if ($partNo === '' || $houseNo === '') {
+                if ($epicNo !== '' && isset($seenEpics[$epicNo])) {
+                    $this->skip($excelRow, "Duplicate EPIC: {$epicNo}");
 
-                        $this->skipped++;
+                    continue;
+                }
 
-                        $this->errors[] = [
-                            'row' => $excelRow,
-                            'reason' => 'PART_NO or HOUSE_NO is missing.',
-                        ];
+                $serialKey = $partNo.'|'.$serialNo;
+                if ($serialNo === '' && $epicNo === '') {
+                    $this->skip($excelRow, 'EPIC and serial number are both missing.');
 
-                        return;
-                    }
+                    continue;
+                }
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 1. Find Booth using PART_NO
-                    |--------------------------------------------------------------------------
-                    */
+                if ($serialNo !== '' && isset($seenSerials[$serialKey])) {
+                    $this->skip($excelRow, "Duplicate PART_NO and serial number: {$serialKey}");
 
-                    $booth = Booth::where('part_no', $partNo)
-                        ->first();
+                    continue;
+                }
 
-                    if (! $booth) {
+                $houseKey = $booth->id.'|'.$houseNo;
+                if (! isset($this->houseIds[$houseKey])) {
+                    $this->houseIds[$houseKey] = House::query()->firstOrCreate(
+                        ['booth_id' => $booth->id, 'house_no' => $houseNo],
+                        ['is_active' => true, 'is_verified' => false],
+                    )->id;
+                }
 
-                        $this->skipped++;
-
-                        $this->errors[] = [
-                            'row' => $excelRow,
-                            'reason' => "Booth not found for PART_NO: {$partNo}",
-                        ];
-
-                        return;
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 2. Validate Booth belongs to selected Constituency
-                    |--------------------------------------------------------------------------
-                    |
-                    | Voter Excel:
-                    |
-                    | Selected Constituency
-                    |        ↓
-                    | PART_NO
-                    |        ↓
-                    | Booth
-                    |        ↓
-                    | Village
-                    |        ↓
-                    | Constituency
-                    |
-                    */
-
-                    $booth->loadMissing(
-                        'village.constituency'
-                    );
-
-                    $boothConstituencyId =
-                        $booth->village?->constituency?->id;
-
-                    if (
-                        ! $boothConstituencyId ||
-                        (int) $boothConstituencyId !== (int) $this->constituencyId
-                    ) {
-
-                        $this->skipped++;
-
-                        $this->errors[] = [
-                            'row' => $excelRow,
-                            'reason' =>
-                                "PART_NO {$partNo} belongs to a different constituency.",
-                        ];
-
-                        return;
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 3. Prevent Duplicate EPIC
-                    |--------------------------------------------------------------------------
-                    */
-
-                    if (
-                        $epicNo !== '' &&
-                        Voter::where('epic_no', strtoupper($epicNo))->exists()
-                    ) {
-
-                        $this->skipped++;
-
-                        $this->errors[] = [
-                            'row' => $excelRow,
-                            'reason' =>
-                                "Duplicate EPIC: {$epicNo}",
-                        ];
-
-                        return;
-                    }
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 4. Find or Create House
-                    |--------------------------------------------------------------------------
-                    |
-                    | Same Booth + House No = Same House
-                    |
-                    */
-
-                    $house = House::firstOrCreate(
-                        [
-                            'booth_id' => $booth->id,
-                            'house_no' => $houseNo,
-                        ],
-                        [
-                            'is_active' => true,
-                            'is_verified' => false,
-                        ]
-                    );
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | 5. Create Voter
-                    |--------------------------------------------------------------------------
-                    */
-
-                    Voter::create([
-                        'house_id' => $house->id,
-
-                        'serial_no' => $this->nullableString(
-                            $row['slnoinpart'] ?? null
-                        ),
-
-                        'part_no' => $partNo,
-
-                        'epic_no' => $epicNo !== ''
-                            ? strtoupper($epicNo)
-                            : null,
-
-                        'name' => $this->buildName($row),
-
-                        'father_husband_name' => $this->nullableString(
-                            $row['eng_m_name'] ?? null
-                        ),
-
-                        'gender' => $this->mapGender(
-                            $row['sex'] ?? null
-                        ),
-
-                        'age' => $this->nullableInt(
-                            $row['age'] ?? null
-                        ),
-
-                        'mobile' => $this->nullableString(
-                            $row['contactno'] ?? null
-                        ),
-
-                        'caste' => $this->nullableString(
-                            $row['ecast'] ?? null
-                        ),
-
-                        'is_active' => true,
-                    ]);
-
-                    $this->imported++;
-                });
-
-            } catch (\Throwable $e) {
-
-                $this->skipped++;
-
-                $this->errors[] = [
-                    'row' => $excelRow,
-                    'reason' => $e->getMessage(),
+                $inserts[] = [
+                    'house_id' => $this->houseIds[$houseKey],
+                    'serial_no' => $serialNo !== '' ? $serialNo : null,
+                    'part_no' => $partNo,
+                    'epic_no' => $epicNo !== '' ? $epicNo : null,
+                    'name' => $this->buildName($row),
+                    'father_husband_name' => $this->nullableString($row['eng_m_name'] ?? null),
+                    'gender' => $this->mapGender($row['sex'] ?? null),
+                    'age' => $this->nullableInt($row['age'] ?? null),
+                    'mobile' => $this->nullableString($row['contactno'] ?? null),
+                    'caste' => $this->nullableString($row['ecast'] ?? null),
+                    'is_active' => true,
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
+
+                if ($epicNo !== '') {
+                    $seenEpics[$epicNo] = true;
+                }
+
+                if ($serialNo !== '') {
+                    $seenSerials[$serialKey] = true;
+                }
             }
+
+            foreach (array_chunk($inserts, 500) as $batch) {
+                Voter::query()->insert($batch);
+                $this->imported += count($batch);
+            }
+        });
+
+        if ($this->batchId) {
+            $newErrors = array_slice($this->errors, $beforeErrors);
+            DB::transaction(function () use ($rows, $beforeImported, $beforeSkipped, $newErrors): void {
+                $batch = VoterImportBatch::query()->lockForUpdate()->find($this->batchId);
+                if (! $batch) {
+                    return;
+                }
+                $errors = array_slice(array_merge($batch->errors ?? [], $newErrors), 0, self::MAX_RECORDED_ERRORS);
+                $batch->update(['processed_rows' => $batch->processed_rows + $rows->count(), 'imported_rows' => $batch->imported_rows + ($this->imported - $beforeImported), 'skipped_rows' => $batch->skipped_rows + ($this->skipped - $beforeSkipped), 'errors' => $errors]);
+            });
+        }
+    }
+
+    protected function skip(int $row, string $reason): void
+    {
+        $this->skipped++;
+        $this->recordError(compact('row', 'reason'));
+    }
+
+    /**
+     * Keep PhpSpreadsheet's memory use bounded for large electoral rolls.
+     */
+    public function chunkSize(): int
+    {
+        return 1_000;
+    }
+
+    public function afterImport(AfterImport $event): void
+    {
+        $updatedHouseHeads = app(HouseHeadService::class)
+            ->backfill($this->constituencyId);
+
+        if ($this->sourcePath && Storage::disk('local')->exists($this->sourcePath)) {
+            Storage::disk('local')->delete($this->sourcePath);
+        }
+
+        Log::info('Queued voter import completed.', [
+            'constituency_id' => $this->constituencyId,
+            'file' => $this->sourcePath,
+            'updated_house_heads' => $updatedHouseHeads,
+        ]);
+        if ($this->batchId) {
+            VoterImportBatch::query()->whereKey($this->batchId)->update(['status' => 'Completed', 'completed_at' => now()]);
+        }
+    }
+
+    public function importFailed(ImportFailed $event): void
+    {
+        if ($this->batchId) {
+            VoterImportBatch::query()->whereKey($this->batchId)->update(['status' => 'Failed', 'failure_message' => $event->getException()->getMessage(), 'completed_at' => now()]);
+        }
+        Log::error('Queued voter import chunk failed.', [
+            'constituency_id' => $this->constituencyId,
+            'file' => $this->sourcePath,
+            'message' => $event->getException()->getMessage(),
+        ]);
+    }
+
+    protected function recordError(array $error): void
+    {
+        if (count($this->errors) < self::MAX_RECORDED_ERRORS) {
+            $this->errors[] = $error;
         }
     }
 
@@ -266,8 +257,12 @@ class VotersImport implements ToCollection, WithHeadingRow
 
     protected function nullableInt(mixed $value): ?int
     {
-        return is_numeric($value)
-            ? (int) $value
-            : null;
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        $value = (int) $value;
+
+        return $value >= 0 && $value <= 255 ? $value : null;
     }
 }

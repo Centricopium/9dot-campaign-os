@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Filament\Resources\Candidates;
+
+use App\Filament\Resources\Candidates\Pages\CreateCandidate;
+use App\Filament\Resources\Candidates\Pages\EditCandidate;
+use App\Filament\Resources\Candidates\Pages\ListCandidates;
+use App\Filament\Resources\Candidates\Schemas\CandidateForm;
+use App\Filament\Resources\Candidates\Tables\CandidatesTable;
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
+use App\Models\Candidate;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
+
+class CandidateResource extends Resource
+{
+    use AuthorizesResourcePermissions;
+
+    protected static string $permissionPrefix = 'candidate';
+
+    protected static ?string $model = Candidate::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Candidate Strategy';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Candidate Selection';
+
+    protected static ?string $modelLabel = 'Candidate Aspirant';
+
+    protected static ?string $pluralModelLabel = 'Candidate Aspirants';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function form(Schema $schema): Schema
+    {
+        return CandidateForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return CandidatesTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withAvg('submittedAssessments as average_score', 'overall_score')
+            ->withAvg('submittedAssessments as average_risk_score', 'risk_score')
+            ->withAvg('submittedAssessments as average_confidence_score', 'confidence_score')
+            ->withCount('submittedAssessments');
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListCandidates::route('/'),
+            'create' => CreateCandidate::route('/create'),
+            'edit' => EditCandidate::route('/{record}/edit'),
+        ];
+    }
+}

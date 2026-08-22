@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Constituencies;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\Constituencies\Pages\CreateConstituency;
 use App\Filament\Resources\Constituencies\Pages\EditConstituency;
 use App\Filament\Resources\Constituencies\Pages\ListConstituencies;
@@ -18,6 +19,8 @@ use Filament\Tables\Table;
 
 class ConstituencyResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'constituency';
     protected static string|UnitEnum|null $navigationGroup = 'Masters';
     protected static ?int $navigationSort = 1;
     protected static ?string $model = Constituency::class;

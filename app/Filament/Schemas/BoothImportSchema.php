@@ -38,7 +38,7 @@ class BoothImportSchema
                             ])
                             ->disk('local')
                             ->directory('imports/booths')
-                            ->maxSize(10240)
+                            ->maxSize(65536)
                             ->required(),
                     ]),
                 ]),

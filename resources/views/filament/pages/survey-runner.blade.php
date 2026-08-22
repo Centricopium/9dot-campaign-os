@@ -400,6 +400,118 @@
         }
 
         /* ------------------------------------------------------------
+           DARK MODE
+        ------------------------------------------------------------ */
+
+        html.dark .sr-card,
+        html.dark .sr-kpi,
+        html.dark .sr-question {
+            border-color: rgba(168, 85, 247, 0.16);
+            background: linear-gradient(145deg, #1a1721, #15121b);
+            box-shadow: 0 14px 34px -28px rgba(168, 85, 247, 0.48);
+        }
+
+        html.dark .sr-kpi:hover,
+        html.dark .sr-question:hover {
+            border-color: rgba(168, 85, 247, 0.42);
+            background: linear-gradient(145deg, #201a2a, #18131f);
+        }
+
+        html.dark .sr-label,
+        html.dark .sr-subtitle,
+        html.dark .sr-voter-meta,
+        html.dark .sr-help,
+        html.dark .sr-muted,
+        html.dark .sr-empty {
+            color: #a8a1b3;
+        }
+
+        html.dark .sr-value,
+        html.dark .sr-number,
+        html.dark .sr-voter-name,
+        html.dark .sr-question-title,
+        html.dark .sr-name,
+        html.dark .sr-table td {
+            color: #f7f4fb;
+        }
+
+        html.dark .sr-profile {
+            border-color: rgba(168, 85, 247, 0.20);
+            background:
+                radial-gradient(circle at 92% 0%, rgba(147, 51, 234, 0.16), transparent 34%),
+                linear-gradient(135deg, #1b1723, #14111a);
+            box-shadow: 0 18px 44px -30px rgba(168, 85, 247, 0.48);
+        }
+
+        html.dark .sr-badge,
+        html.dark .sr-question-number {
+            border-color: rgba(168, 85, 247, 0.26);
+            background: rgba(124, 58, 237, 0.16);
+            color: #d8b4fe;
+        }
+
+        html.dark .sr-input,
+        html.dark .sr-select,
+        html.dark .sr-textarea {
+            border-color: rgba(168, 85, 247, 0.20);
+            background: #100e15;
+            color: #f7f4fb;
+            color-scheme: dark;
+        }
+
+        html.dark .sr-input::placeholder,
+        html.dark .sr-textarea::placeholder {
+            color: #746d7f;
+        }
+
+        html.dark .sr-input:focus,
+        html.dark .sr-select:focus,
+        html.dark .sr-textarea:focus {
+            border-color: rgba(168, 85, 247, 0.70);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+        }
+
+        html.dark .sr-option {
+            border-color: rgba(168, 85, 247, 0.16);
+            background: #17131d;
+        }
+
+        html.dark .sr-option:hover {
+            border-color: rgba(168, 85, 247, 0.40);
+            background: #21182b;
+        }
+
+        html.dark .sr-option span {
+            color: #ded8e7;
+        }
+
+        html.dark .sr-table th {
+            border-bottom-color: rgba(168, 85, 247, 0.18);
+            background: #17131d;
+            color: #aaa2b5;
+        }
+
+        html.dark .sr-table td {
+            border-bottom-color: rgba(168, 85, 247, 0.10);
+        }
+
+        html.dark .sr-table tbody tr:hover {
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        html.dark .sr-support {
+            border-color: rgba(168, 85, 247, 0.18);
+            background: #211a29;
+            color: #d8d1e1;
+        }
+
+        html.dark .sr-warning {
+            border-color: rgba(248, 113, 113, 0.28);
+            background: rgba(127, 29, 29, 0.22);
+            color: #fca5a5;
+        }
+
+        /* ------------------------------------------------------------
            RESPONSIVE
         ------------------------------------------------------------ */
 

@@ -1,9 +1,14 @@
 <x-filament-panels::page>
 
     @php
-        $summary = $this->summary ?? [];
-        $village = $this->selectedVillage;
-    @endphp
+
+    $summary = $this->summary ?? [];
+
+    $village = $this->selectedVillage;
+
+    $boothIntelligence = $this->boothIntelligence;
+
+@endphp
 
     <style>
         /* =========================================================
@@ -372,6 +377,97 @@
             margin-top: 7px;
             color: #6b7280;
             font-size: 13px;
+        }
+
+        /* =========================================================
+           DARK THEME — PURPLE / CHARCOAL
+        ========================================================== */
+
+        html.dark .vd-selector {
+            border-color: rgba(139, 92, 246, .34);
+            background: linear-gradient(135deg, #08070d 0%, #151022 55%, #291044 100%);
+            box-shadow: 0 18px 42px rgba(0, 0, 0, .34), 0 0 35px rgba(124, 58, 237, .09);
+        }
+
+        html.dark .vd-selector-title,
+        html.dark .vd-section-title,
+        html.dark .vd-number,
+        html.dark .vd-value,
+        html.dark .vd-support-number,
+        html.dark .vd-party-name,
+        html.dark .vd-party-total,
+        html.dark .vd-party-count,
+        html.dark .vd-info-value,
+        html.dark .vd-empty-title {
+            color: #f8fafc;
+        }
+
+        html.dark .vd-selector-description,
+        html.dark .vd-section-description,
+        html.dark .vd-label,
+        html.dark .vd-party-full-name,
+        html.dark .vd-empty-description {
+            color: #a8a3b7;
+        }
+
+        html.dark .vd-subtitle {
+            color: #777184;
+        }
+
+        html.dark .vd-select-label {
+            color: #d8d4e3;
+        }
+
+        html.dark .vd-select {
+            color: #f8fafc;
+            border-color: rgba(139, 92, 246, .34);
+            background: #100d17;
+            color-scheme: dark;
+        }
+
+        html.dark .vd-select:focus {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, .20);
+        }
+
+        html.dark .vd-section {
+            border-color: rgba(139, 92, 246, .25);
+            background: linear-gradient(145deg, #09080e, #100c19);
+            box-shadow: 0 15px 38px rgba(0, 0, 0, .28);
+        }
+
+        html.dark .vd-section-header {
+            border-color: rgba(139, 92, 246, .20);
+            background: linear-gradient(90deg, #0e0b14, #1c102b);
+        }
+
+        html.dark .vd-section-body {
+            background: rgba(7, 6, 11, .40);
+        }
+
+        html.dark .vd-card {
+            border-color: rgba(139, 92, 246, .22);
+            background: linear-gradient(145deg, #121018 0%, #191126 100%);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, .22);
+        }
+
+        html.dark .vd-card:hover {
+            border-color: rgba(167, 139, 250, .62);
+            background: linear-gradient(145deg, #171221, #25143b);
+            box-shadow: 0 13px 30px rgba(76, 29, 149, .23);
+        }
+
+        html.dark .vd-icon,
+        html.dark .vd-party-symbol,
+        html.dark .vd-empty-icon {
+            color: #ddd6fe;
+            border: 1px solid rgba(167, 139, 250, .22);
+            background: rgba(124, 58, 237, .17);
+        }
+
+        html.dark .vd-party-row {
+            color: #c4bfce;
+            border-color: rgba(148, 163, 184, .12);
         }
 
         /* =========================================================
@@ -987,7 +1083,209 @@
 
             </div>
 
+{{-- =====================================================
+     BOOTH INTELLIGENCE
+====================================================== --}}
 
+<div class="vd-section">
+
+    <div class="vd-section-header">
+
+        <div class="vd-section-title">
+            🗳️ Booth Intelligence
+        </div>
+
+        <div class="vd-section-description">
+            AI powered booth level analysis.
+        </div>
+
+    </div>
+
+
+    <div class="vd-section-body">
+
+
+        <div class="vd-grid vd-grid-3">
+
+
+        @forelse($boothIntelligence as $booth)
+
+
+            <div class="vd-card">
+
+
+                <div class="vd-party-header">
+
+
+                    <div>
+
+                        <div class="vd-party-name">
+
+                            🗳️ {{ $booth['booth'] }}
+
+                        </div>
+
+
+                        <div class="vd-party-full-name">
+
+                            Booth No:
+                            {{ $booth['booth_no'] }}
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="vd-party-total">
+
+                        {{ $booth['total_voters'] }}
+
+                    </div>
+
+
+                </div>
+
+
+
+                <br>
+
+
+                <div class="vd-party-list">
+
+
+                    <div class="vd-party-row">
+
+                        <span>
+                            Houses
+                        </span>
+
+                        <span class="vd-party-count">
+                            {{ $booth['houses'] }}
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="vd-party-row">
+
+                        <span>
+                            Support
+                        </span>
+
+                        <span class="vd-party-count">
+
+                            {{ $booth['support_percentage'] }}%
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="vd-party-row">
+
+                        <span>
+                            Neutral
+                        </span>
+
+                        <span class="vd-party-count">
+
+                            {{ $booth['neutral_percentage'] }}%
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="vd-party-row">
+
+                        <span>
+                            AI Risk Score
+                        </span>
+
+                        <span class="vd-party-count">
+
+                            {{ $booth['risk_score'] }}/100
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="vd-party-row">
+
+                        <span>
+                            Priority
+                        </span>
+
+                        <span class="vd-party-count">
+
+                            {{ $booth['priority'] }}
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <br>
+
+
+                <div class="vd-subtitle">
+
+                    🎯 {{ $booth['action'] }}
+
+                </div>
+
+
+
+                <br>
+
+
+                <a
+                href="{{ url('/admin/booth-intelligence?booth='.$booth['booth_id']) }}"
+                class="vd-select"
+                style="
+                display:block;
+                text-align:center;
+                text-decoration:none;
+                "
+                >
+
+                🔍 Open Booth Intelligence
+
+                </a>
+
+
+            </div>
+
+
+        @empty
+
+
+            <div class="vd-card">
+
+                No Booth Data Found
+
+            </div>
+
+
+        @endforelse
+
+
+        </div>
+
+
+    </div>
+
+</div>
             {{-- =====================================================
                  POLITICAL PARTY OVERVIEW
             ====================================================== --}}

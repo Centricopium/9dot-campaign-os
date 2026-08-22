@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Concerns\AuthorizesPagePermission;
 use App\Services\Survey\PoliticalAnalyticsService;
 use BackedEnum;
 use Filament\Pages\Page;
@@ -10,6 +11,8 @@ use UnitEnum;
 
 class PoliticalAnalytics extends Page
 {
+    use AuthorizesPagePermission;
+    protected static string $requiredPermission = 'report.view';
     protected static string|BackedEnum|null $navigationIcon =
         Heroicon::OutlinedChartBarSquare;
 

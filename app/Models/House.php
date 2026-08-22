@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ScopedToAssemblyConstituency;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class House extends Model
 {
+    use ScopedToAssemblyConstituency;
     protected $fillable = [
         'booth_id',
         'house_no',
@@ -103,4 +106,10 @@ class House extends Model
             ->where('support_level', 'Undecided')
             ->count();
     }
+    public function intelligence()
+{
+    return $this->hasOne(
+        HouseIntelligence::class
+    );
+}
 }

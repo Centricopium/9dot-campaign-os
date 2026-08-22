@@ -451,6 +451,106 @@
         }
 
         /* ============================================================
+           DARK THEME — PURPLE / CHARCOAL
+        ============================================================ */
+
+        html.dark .booth-header {
+            border-color: rgba(139, 92, 246, .34);
+            background: linear-gradient(135deg, #08070d 0%, #151022 55%, #24103b 100%);
+            box-shadow: 0 18px 42px rgba(0, 0, 0, .34), 0 0 35px rgba(124, 58, 237, .08);
+        }
+
+        html.dark .booth-header-title,
+        html.dark .booth-section-title,
+        html.dark .booth-card-number,
+        html.dark .booth-value,
+        html.dark .support-number,
+        html.dark .party-name,
+        html.dark .party-total,
+        html.dark .party-count,
+        html.dark .info-value,
+        html.dark .empty-title {
+            color: #f8fafc;
+        }
+
+        html.dark .booth-header-subtitle,
+        html.dark .booth-section-description,
+        html.dark .booth-card-label,
+        html.dark .support-label,
+        html.dark .party-full-name,
+        html.dark .info-label,
+        html.dark .empty-description {
+            color: #a8a3b7;
+        }
+
+        html.dark .booth-card-description {
+            color: #777184;
+        }
+
+        html.dark .booth-header-badge {
+            color: #ddd6fe;
+            border-color: rgba(167, 139, 250, .28);
+            background: rgba(124, 58, 237, .16);
+        }
+
+        html.dark .booth-section {
+            border-color: rgba(139, 92, 246, .25);
+            background: linear-gradient(145deg, #09080e, #100c19);
+            box-shadow: 0 15px 38px rgba(0, 0, 0, .28);
+        }
+
+        html.dark .booth-section-header {
+            border-color: rgba(139, 92, 246, .20);
+            background: linear-gradient(90deg, #0d0b13, #171021);
+        }
+
+        html.dark .booth-section-body {
+            background: rgba(7, 6, 11, .42);
+        }
+
+        html.dark .booth-card,
+        html.dark .support-card,
+        html.dark .booth-value-card {
+            border-color: rgba(139, 92, 246, .22);
+            background: linear-gradient(145deg, #121018 0%, #191126 100%);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, .22);
+        }
+
+        html.dark .booth-card:hover,
+        html.dark .support-card:hover {
+            border-color: rgba(167, 139, 250, .62);
+            background: linear-gradient(145deg, #171221, #25143b);
+            box-shadow: 0 12px 28px rgba(76, 29, 149, .22);
+        }
+
+        html.dark .booth-select-label {
+            color: #d8d4e3;
+        }
+
+        html.dark .booth-select {
+            color: #f8fafc;
+            border-color: rgba(139, 92, 246, .32);
+            background: #100d17;
+            color-scheme: dark;
+        }
+
+        html.dark .booth-select:focus {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, .20);
+        }
+
+        html.dark .party-row {
+            color: #c4bfce;
+            border-color: rgba(148, 163, 184, .12);
+        }
+
+        html.dark .empty-icon {
+            color: #ddd6fe;
+            background: rgba(124, 58, 237, .18);
+            box-shadow: inset 0 0 0 1px rgba(167, 139, 250, .22);
+        }
+
+        /* ============================================================
            RESPONSIVE
         ============================================================ */
 

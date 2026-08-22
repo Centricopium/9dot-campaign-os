@@ -38,7 +38,7 @@ class VillageImportSchema
                             ])
                             ->disk('local')
                             ->directory('imports/villages')
-                            ->maxSize(10240)
+                            ->maxSize(65536)
                             ->required(),
                     ]),
                 ]),

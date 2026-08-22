@@ -656,6 +656,93 @@
 
 
         /* ============================================================
+           DARK MODE
+        ============================================================ */
+
+        html.dark .command-header {
+            border-color: rgba(168, 85, 247, 0.20);
+            background:
+                radial-gradient(circle at 92% 0%, rgba(147, 51, 234, 0.20), transparent 34%),
+                linear-gradient(135deg, #191621 0%, #14111b 58%, #21132e 100%);
+            box-shadow: 0 20px 50px -30px rgba(168, 85, 247, 0.48);
+        }
+
+        html.dark .command-header::before {
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.20), transparent 70%);
+        }
+
+        html.dark .command-title,
+        html.dark .command-section-title,
+        html.dark .command-card-number,
+        html.dark .quick-title,
+        html.dark .party-name,
+        html.dark .party-count {
+            color: #f7f4fb;
+        }
+
+        html.dark .command-subtitle,
+        html.dark .command-section-description,
+        html.dark .command-card-label,
+        html.dark .quick-description {
+            color: #a8a1b3;
+        }
+
+        html.dark .command-card-description,
+        html.dark .party-full-name,
+        html.dark .quick-arrow {
+            color: #7f778b;
+        }
+
+        html.dark .command-header-status,
+        html.dark .command-pill {
+            border-color: rgba(168, 85, 247, 0.20);
+            background: rgba(24, 20, 32, 0.84);
+            color: #d8d1e1;
+            box-shadow: 0 8px 24px -18px rgba(168, 85, 247, 0.50);
+        }
+
+        html.dark .command-section {
+            border-color: rgba(168, 85, 247, 0.16);
+            background: #121018;
+            box-shadow: 0 18px 48px -34px rgba(168, 85, 247, 0.38);
+        }
+
+        html.dark .command-section-header {
+            border-bottom-color: rgba(168, 85, 247, 0.14);
+            background: linear-gradient(110deg, #18141f, #121018 65%);
+        }
+
+        html.dark .command-card {
+            border-color: rgba(168, 85, 247, 0.14);
+            background: linear-gradient(145deg, #1a1721, #15121b);
+            box-shadow: 0 10px 26px -22px rgba(168, 85, 247, 0.42);
+        }
+
+        html.dark .command-card:hover {
+            border-color: rgba(168, 85, 247, 0.40);
+            background: linear-gradient(145deg, #201a2a, #18131f);
+            box-shadow: 0 18px 34px -22px rgba(168, 85, 247, 0.55);
+        }
+
+        html.dark .quick-icon {
+            border-color: rgba(168, 85, 247, 0.20);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.22), rgba(30, 22, 39, 0.92));
+        }
+
+        html.dark .health-progress {
+            background: #292330;
+        }
+
+        html.dark .health-percentage {
+            color: #c084fc;
+        }
+
+        html.dark .party-row {
+            border-bottom-color: rgba(168, 85, 247, 0.12);
+        }
+
+
+        /* ============================================================
            RESPONSIVE
         ============================================================ */
 
@@ -710,6 +797,144 @@
                 padding: 12px;
             }
 
+        }
+
+        .command-message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 17px 20px;
+            border-bottom: 1px solid #eef0f3;
+            background: linear-gradient(110deg, #17111f, #4c1d95 65%, #7c3aed);
+            color: #ffffff;
+        }
+
+        .command-message-title {
+            font-size: 15px;
+            font-weight: 850;
+        }
+
+        .command-message-summary {
+            margin-top: 4px;
+            color: #ddd6fe;
+            font-size: 10px;
+        }
+
+        .command-message-link {
+            padding: 7px 11px;
+            border: 1px solid rgba(255, 255, 255, .24);
+            border-radius: 9px;
+            color: #ffffff;
+            background: rgba(255, 255, 255, .10);
+            font-size: 10px;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .command-message-list {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0;
+        }
+
+        .command-message-item {
+            min-width: 0;
+            padding: 14px 15px;
+            border-right: 1px solid #eef0f3;
+            color: inherit;
+            text-decoration: none;
+            transition: background .18s ease;
+        }
+
+        .command-message-item:last-child {
+            border-right: 0;
+        }
+
+        .command-message-item:hover {
+            background: #faf8ff;
+        }
+
+        .command-message-from {
+            color: #7c3aed;
+            font-size: 9px;
+            font-weight: 850;
+        }
+
+        .command-message-subject {
+            margin-top: 5px;
+            overflow: hidden;
+            color: #111827;
+            font-size: 11px;
+            font-weight: 850;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .command-message-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 7px;
+            margin-top: 7px;
+            color: #9ca3af;
+            font-size: 8px;
+        }
+
+        .command-message-priority {
+            padding: 3px 6px;
+            border-radius: 999px;
+            color: #92400e;
+            background: #fef3c7;
+            font-size: 7px;
+            font-weight: 850;
+        }
+
+        .command-message-priority.urgent {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .command-message-empty {
+            grid-column: 1 / -1;
+            padding: 22px;
+            color: #6b7280;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        html.dark .command-message-item {
+            border-color: rgba(168, 85, 247, .12);
+        }
+
+        html.dark .command-message-item:hover {
+            background: #171023;
+        }
+
+        html.dark .command-message-subject {
+            color: #f8fafc;
+        }
+
+        @media (max-width: 1200px) {
+            .command-message-list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .command-message-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .command-message-list {
+                grid-template-columns: 1fr;
+            }
+
+            .command-message-item {
+                border-right: 0;
+                border-bottom: 1px solid #eef0f3;
+            }
         }
 
     </style>
@@ -770,6 +995,29 @@
             </div>
 
         </div>
+
+        @can('internal_message.view')
+            <div class="command-section">
+                <div class="command-message-header">
+                    <div>
+                        <div class="command-message-title">New Internal Messages</div>
+                        <div class="command-message-summary">{{ number_format($this->unreadMessageCount) }} unread @if($this->urgentUnreadCount) · {{ number_format($this->urgentUnreadCount) }} important / urgent @endif</div>
+                    </div>
+                    <a class="command-message-link" href="{{ $this->messageCentreUrl() }}">Open Inbox</a>
+                </div>
+                <div class="command-message-list">
+                    @forelse($this->unreadMessages as $message)
+                        <a class="command-message-item" href="{{ $this->messageConversationUrl($message) }}">
+                            <div class="command-message-from">{{ $message->sender?->name ?? 'Campaign Team' }}</div>
+                            <div class="command-message-subject">{{ $message->conversation?->subject ?? 'Internal Message' }}</div>
+                            <div class="command-message-meta"><span>{{ $message->created_at->diffForHumans(short: true) }}</span>@if($message->priority !== 'Normal')<span class="command-message-priority {{ strtolower($message->priority) }}">{{ $message->priority }}</span>@endif</div>
+                        </a>
+                    @empty
+                        <div class="command-message-empty">You are all caught up. No unread internal messages.</div>
+                    @endforelse
+                </div>
+            </div>
+        @endcan
 
 
         {{-- ============================================================

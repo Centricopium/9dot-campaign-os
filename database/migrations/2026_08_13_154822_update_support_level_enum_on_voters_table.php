@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -22,7 +20,8 @@ return new class extends Migration
                 'support_level' => 'Neutral',
             ]);
 
-        DB::statement("
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
             ALTER TABLE voters
             MODIFY support_level ENUM(
                 'Strong Support',
@@ -34,7 +33,8 @@ return new class extends Migration
                 'Moderate Opposition',
                 'Strong Opposition'
             ) NOT NULL DEFAULT 'Neutral'
-        ");
+            ");
+        }
     }
 
     /**
@@ -59,7 +59,8 @@ return new class extends Migration
                 'support_level' => 'Neutral',
             ]);
 
-        DB::statement("
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("
             ALTER TABLE voters
             MODIFY support_level ENUM(
                 'Strong Congress',
@@ -70,6 +71,7 @@ return new class extends Migration
                 'Strong BJP',
                 'Other'
             ) NOT NULL DEFAULT 'Neutral'
-        ");
+            ");
+        }
     }
 };

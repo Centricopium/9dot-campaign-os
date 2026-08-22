@@ -49,10 +49,11 @@ $villageAnalysis = $data['villageAnalysis'];
 
 .dark .pa-card{
 
-    background:rgba(24,24,27,.75);
+    background:linear-gradient(145deg,#1a1721,#15121b);
 
-    border-color:
-    rgba(255,255,255,.1);
+    border-color:rgba(168,85,247,.16);
+
+    box-shadow:0 16px 40px -30px rgba(168,85,247,.48);
 
 }
 
@@ -62,6 +63,12 @@ $villageAnalysis = $data['villageAnalysis'];
 
     transform:translateY(-3px);
 
+}
+
+.dark .pa-card:hover{
+    border-color:rgba(168,85,247,.44);
+    background:linear-gradient(145deg,#211a2b,#18131f);
+    box-shadow:0 20px 38px -25px rgba(168,85,247,.58);
 }
 
 
@@ -102,6 +109,12 @@ $villageAnalysis = $data['villageAnalysis'];
 
     font-weight:800;
 
+    color:#111827;
+
+}
+
+.dark .pa-number{
+    color:#f7f4fb;
 }
 
 
@@ -124,9 +137,11 @@ $villageAnalysis = $data['villageAnalysis'];
 
 .dark .pa-section{
 
-    background:rgba(24,24,27,.75);
+    background:#121018;
 
-    border-color:rgba(255,255,255,.1);
+    border-color:rgba(168,85,247,.16);
+
+    box-shadow:0 18px 44px -32px rgba(168,85,247,.44);
 
 }
 
@@ -148,7 +163,11 @@ $villageAnalysis = $data['villageAnalysis'];
 
 .dark .pa-header{
 
-    border-color:rgba(255,255,255,.1);
+    border-color:rgba(168,85,247,.14);
+
+    background:linear-gradient(110deg,#1a1622,#131019 65%);
+
+    color:#f7f4fb;
 
 }
 
@@ -158,6 +177,11 @@ $villageAnalysis = $data['villageAnalysis'];
 
     padding:20px;
 
+}
+
+.dark .pa-body{
+    background:#121018;
+    color:#ded8e7;
 }
 
 
@@ -180,6 +204,17 @@ $villageAnalysis = $data['villageAnalysis'];
 
 }
 
+.dark .pa-row{
+    border:1px solid rgba(168,85,247,.12);
+    background:linear-gradient(145deg,#1a1721,#15121b);
+    color:#f7f4fb;
+}
+
+.dark .pa-row:hover{
+    border-color:rgba(168,85,247,.34);
+    background:rgba(124,58,237,.10);
+}
+
 
 
 .pa-badge{
@@ -196,6 +231,16 @@ $villageAnalysis = $data['villageAnalysis'];
 
     background:rgba(128,128,128,.18);
 
+}
+
+.dark .pa-badge{
+    border:1px solid rgba(168,85,247,.18);
+    background:#211a29;
+    color:#d8d1e1;
+}
+
+.dark .pa-row small{
+    color:#a8a1b3;
 }
 
 

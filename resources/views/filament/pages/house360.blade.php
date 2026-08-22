@@ -404,6 +404,110 @@
         }
 
         /* =========================================================
+           DARK MODE
+        ========================================================== */
+
+        html.dark .house360-search,
+        html.dark .house360-profile {
+            border-color: rgba(168, 85, 247, .20);
+            background:
+                radial-gradient(circle at 92% 0%, rgba(147, 51, 234, .18), transparent 34%),
+                linear-gradient(135deg, #1b1723, #14111a);
+            box-shadow: 0 18px 46px -32px rgba(168, 85, 247, .50);
+        }
+
+        html.dark .house360-card,
+        html.dark .house360-section,
+        html.dark .house360-empty {
+            border-color: rgba(168, 85, 247, .16);
+            background: linear-gradient(145deg, #1a1721, #15121b);
+            box-shadow: 0 16px 38px -30px rgba(168, 85, 247, .46);
+        }
+
+        html.dark .house360-card:hover {
+            border-color: rgba(168, 85, 247, .42);
+            background: linear-gradient(145deg, #211a2b, #18131f);
+            box-shadow: 0 20px 38px -25px rgba(168, 85, 247, .58);
+        }
+
+        html.dark .house360-search-title,
+        html.dark .house360-profile-title,
+        html.dark .house360-value,
+        html.dark .house360-number,
+        html.dark .house360-section-title,
+        html.dark .house360-empty-title,
+        html.dark .house360-table td,
+        html.dark .house360-table td strong,
+        html.dark .house360-table td a {
+            color: #f7f4fb;
+        }
+
+        html.dark .house360-search-description,
+        html.dark .house360-profile-subtitle,
+        html.dark .house360-label,
+        html.dark .house360-section-description,
+        html.dark .house360-empty-description {
+            color: #a8a1b3;
+        }
+
+        html.dark .house360-subtitle {
+            color: #7f778b;
+        }
+
+        html.dark .house360-input {
+            border-color: rgba(168, 85, 247, .22);
+            background: #100e15;
+            color: #f7f4fb;
+            color-scheme: dark;
+        }
+
+        html.dark .house360-input::placeholder {
+            color: #746d7f;
+        }
+
+        html.dark .house360-input:focus {
+            border-color: rgba(168, 85, 247, .72);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, .14);
+        }
+
+        html.dark .house360-profile-icon,
+        html.dark .house360-icon,
+        html.dark .house360-empty-icon {
+            border: 1px solid rgba(168, 85, 247, .18);
+            background: linear-gradient(135deg, rgba(124, 58, 237, .20), rgba(30, 22, 39, .94));
+        }
+
+        html.dark .house360-badge,
+        html.dark .house360-support-badge {
+            border-color: rgba(168, 85, 247, .20);
+            background: #211a29;
+            color: #d8d1e1;
+        }
+
+        html.dark .house360-section-header {
+            border-bottom-color: rgba(168, 85, 247, .14);
+            background: linear-gradient(110deg, #1a1622, #131019 65%);
+        }
+
+        html.dark .house360-section-body {
+            background: #121018;
+        }
+
+        html.dark .house360-table th {
+            border-bottom-color: rgba(168, 85, 247, .18);
+            background: #17131d;
+            color: #aaa2b5;
+        }
+
+        html.dark .house360-table td {
+            border-bottom-color: rgba(168, 85, 247, .10);
+        }
+
+        html.dark .house360-table tbody tr:hover {
+            background: rgba(124, 58, 237, .08);
+        }
+
+        /* =========================================================
            RESPONSIVE
         ========================================================== */
 
@@ -1097,7 +1201,173 @@
 
             </div>
 
+{{-- =====================================================
+     AI FAMILY INTELLIGENCE
+===================================================== --}}
 
+@if($this->houseIntelligence)
+
+
+<div class="house360-section">
+
+
+    <div class="house360-section-header">
+
+        <div class="house360-section-title">
+            🤖 AI Family Intelligence
+        </div>
+
+        <div class="house360-section-description">
+            AI based household analysis and campaign recommendation
+        </div>
+
+    </div>
+
+
+    <div class="house360-section-body">
+
+
+        <div class="house360-grid house360-grid-4">
+
+
+            {{-- Family Score --}}
+
+            <div class="house360-card">
+
+                <div class="house360-icon">
+                    🧠
+                </div>
+
+                <div class="house360-label">
+                    Family Score
+                </div>
+
+                <div class="house360-number">
+
+                    {{
+                        $this->houseIntelligence['family_score']
+                        ?? 0
+                    }}/100
+
+                </div>
+
+            </div>
+
+
+
+            {{-- Family Type --}}
+
+            <div class="house360-card">
+
+                <div class="house360-icon">
+                    👨‍👩‍👧
+                </div>
+
+                <div class="house360-label">
+                    Family Type
+                </div>
+
+                <div class="house360-value">
+
+                    {{
+                        $this->houseIntelligence['family_type']
+                        ?? '-'
+                    }}
+
+                </div>
+
+            </div>
+
+
+
+            {{-- Conversion --}}
+
+            <div class="house360-card">
+
+                <div class="house360-icon">
+                    🎯
+                </div>
+
+                <div class="house360-label">
+                    Conversion Probability
+                </div>
+
+                <div class="house360-number">
+
+                    {{
+                        $this->houseIntelligence['conversion_probability']
+                        ?? 0
+                    }}%
+
+                </div>
+
+            </div>
+
+
+
+            {{-- Priority --}}
+
+            <div class="house360-card">
+
+                <div class="house360-icon">
+                    🚦
+                </div>
+
+                <div class="house360-label">
+                    AI Priority
+                </div>
+
+                <div class="house360-value">
+
+                    {{
+                        $this->houseIntelligence['priority']
+                        ?? '-'
+                    }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <br>
+
+
+
+        {{-- AI Recommendation --}}
+
+        <div class="house360-card">
+
+
+            <div class="house360-label">
+                🤖 AI Recommendation
+            </div>
+
+
+            <div class="house360-value"
+                 style="margin-top:12px;">
+
+                {{
+                    $this->houseIntelligence['recommendation']
+                    ?? 'No recommendation available'
+                }}
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+@endif
             {{-- =====================================================
                  CAMPAIGN INTELLIGENCE
             ====================================================== --}}

@@ -20,6 +20,12 @@ class VoterForm
         return $schema
             ->components([
 
+                /*
+                |--------------------------------------------------------------------------
+                | Electoral Information
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Electoral Information')
                     ->description('Election Commission Details')
                     ->schema([
@@ -31,7 +37,8 @@ class VoterForm
                                 titleAttribute: 'house_no',
                             )
                             ->getOptionLabelFromRecordUsing(
-                                fn (House $record): string => "{$record->house_no} - {$record->head_of_family}"
+                                fn (House $record): string =>
+                                    "{$record->house_no} - {$record->head_of_family}"
                             )
                             ->searchable()
                             ->preload()
@@ -57,15 +64,22 @@ class VoterForm
                                     ->label('EPIC No.')
                                     ->maxLength(20)
                                     ->dehydrateStateUsing(
-                                        fn (?string $state): ?string => $state
-                                            ? strtoupper($state)
-                                            : null
+                                        fn (?string $state): ?string =>
+                                            $state
+                                                ? strtoupper($state)
+                                                : null
                                     )
                                     ->unique(ignoreRecord: true),
 
                             ]),
 
                     ]),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Personal Information
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Personal Information')
                     ->schema([
@@ -110,6 +124,12 @@ class VoterForm
 
                     ]),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Contact Information
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Contact Information')
                     ->schema([
 
@@ -137,6 +157,12 @@ class VoterForm
 
                     ]),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Address Information
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Address Information')
                     ->schema([
 
@@ -150,6 +176,12 @@ class VoterForm
                             ->columnSpanFull(),
 
                     ]),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Social Information
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Social Information')
                     ->schema([
@@ -181,6 +213,12 @@ class VoterForm
                             ]),
 
                     ]),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Political Information
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Political Information')
                     ->schema([
@@ -231,6 +269,12 @@ class VoterForm
 
                     ]),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Campaign Information
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Campaign Information')
                     ->schema([
 
@@ -270,24 +314,83 @@ class VoterForm
 
                     ]),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Organisation Information
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Organisation Information')
+                    ->description('Assign booth-level organisational responsibility to this voter.')
                     ->schema([
 
                         Grid::make(3)
                             ->schema([
 
-                                TextInput::make('booth_committee_role')
-                                    ->label('Booth Committee Role'),
+                                Select::make('booth_committee_role')
+                                    ->label('Booth Organisation Role')
+                                    ->options([
+
+                                        'Booth President' =>
+                                            'Booth President',
+
+                                        'Mahila Booth President' =>
+                                            'Mahila Booth President',
+
+                                        'Youth Booth President' =>
+                                            'Youth Booth President',
+
+                                        'Booth Vice President' =>
+                                            'Booth Vice President',
+
+                                        'Booth General Secretary' =>
+                                            'Booth General Secretary',
+
+                                        'Booth Secretary' =>
+                                            'Booth Secretary',
+
+                                        'Booth Treasurer' =>
+                                            'Booth Treasurer',
+
+                                        'Panna Pramukh' =>
+                                            'Panna Pramukh',
+
+                                        'Polling Agent' =>
+                                            'Polling Agent',
+
+                                        'Booth Volunteer' =>
+                                            'Booth Volunteer',
+
+                                        'Mahila Booth Volunteer' =>
+                                            'Mahila Booth Volunteer',
+
+                                        'Youth Booth Volunteer' =>
+                                            'Youth Booth Volunteer',
+
+                                        'Other' =>
+                                            'Other',
+
+                                    ])
+                                    ->searchable()
+                                    ->placeholder('Select Organisation Role'),
 
                                 TextInput::make('panna_pramukh')
-                                    ->label('Panna Pramukh'),
+                                    ->label('Panna Pramukh')
+                                    ->maxLength(150),
 
                                 TextInput::make('polling_agent')
-                                    ->label('Polling Agent'),
+                                    ->label('Polling Agent')
+                                    ->maxLength(150),
 
                             ]),
 
                     ]),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Social Media
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Social Media')
                     ->schema([
@@ -308,6 +411,12 @@ class VoterForm
 
                     ]),
 
+                /*
+                |--------------------------------------------------------------------------
+                | Location
+                |--------------------------------------------------------------------------
+                */
+
                 Section::make('Location')
                     ->schema([
 
@@ -327,6 +436,12 @@ class VoterForm
                             ]),
 
                     ]),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Notes
+                |--------------------------------------------------------------------------
+                */
 
                 Section::make('Notes')
                     ->schema([

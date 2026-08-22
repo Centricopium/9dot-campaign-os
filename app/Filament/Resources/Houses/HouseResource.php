@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Houses;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\Houses\Pages\CreateHouse;
 use App\Filament\Resources\Houses\Pages\EditHouse;
 use App\Filament\Resources\Houses\Pages\ListHouses;
@@ -20,6 +21,8 @@ use App\Filament\Resources\Houses\RelationManagers\VotersRelationManager;
 
 class HouseResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'house';
     protected static ?string $model = House::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHome;

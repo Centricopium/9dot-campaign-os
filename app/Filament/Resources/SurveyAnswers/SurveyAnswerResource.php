@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SurveyAnswers;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\SurveyAnswers\Pages\CreateSurveyAnswer;
 use App\Filament\Resources\SurveyAnswers\Pages\EditSurveyAnswer;
 use App\Filament\Resources\SurveyAnswers\Pages\ListSurveyAnswers;
@@ -18,6 +19,8 @@ use Filament\Tables\Table;
 
 class SurveyAnswerResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'survey';
     protected static string|\UnitEnum|null $navigationGroup = 'Survey Management';
     protected static ?int $navigationSort = 2;
 

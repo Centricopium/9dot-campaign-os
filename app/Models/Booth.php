@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ScopedToAssemblyConstituency;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Booth extends Model
 {
+    use ScopedToAssemblyConstituency;
+
     protected $fillable = [
         'village_id',
         'booth_no',
@@ -56,6 +59,11 @@ class Booth extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
+    }
+
+    public function campaignTasks(): HasMany
+    {
+        return $this->hasMany(CampaignTask::class);
     }
 
     /*

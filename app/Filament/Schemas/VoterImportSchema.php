@@ -42,7 +42,7 @@ class VoterImportSchema
                             ])
                             ->disk('local')
                             ->directory('imports/voters')
-                            ->maxSize(10240)
+                            ->maxSize(65536)
                             ->required(),
 
                     ]),

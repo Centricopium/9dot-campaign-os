@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Booths;
 
+use App\Filament\Resources\Concerns\AuthorizesResourcePermissions;
 use App\Filament\Resources\Booths\Pages\CreateBooth;
 use App\Filament\Resources\Booths\Pages\EditBooth;
 use App\Filament\Resources\Booths\Pages\ListBooths;
@@ -17,6 +18,8 @@ use Filament\Tables\Table;
 
 class BoothResource extends Resource
 {
+    use AuthorizesResourcePermissions;
+    protected static string $permissionPrefix = 'booth';
     protected static string|UnitEnum|null $navigationGroup = 'Masters';
     protected static ?int $navigationSort = 3;
     protected static ?string $model = Booth::class;

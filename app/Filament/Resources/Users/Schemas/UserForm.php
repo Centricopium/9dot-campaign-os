@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use App\Models\Booth;
 use App\Models\Constituency;
+use App\Models\Role;
 use App\Models\Village;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -16,7 +17,6 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class UserForm
 {
@@ -71,11 +71,20 @@ class UserForm
             Section::make('Role & Access')
                 ->schema([
 
-                    Select::make('roles')
+                    Select::make('role_id')
                         ->label('Role')
-                        ->relationship('roles', 'name')
-                        ->preload()
-                        ->searchable()
+                        ->options(function (): array {
+                            return Role::query()
+                                ->where('guard_name', 'web')
+                                ->when(
+                                    ! auth()->user()?->isSuperAdmin(),
+                                    fn ($query) => $query->where('name', '!=', 'Super Admin'),
+                                )
+                                ->orderBy('name')
+                                ->pluck('name', 'id')
+                                ->all();
+                        })
+                        ->native(true)
                         ->required(),
 
                 ]),

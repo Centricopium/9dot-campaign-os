@@ -3,19 +3,18 @@
 namespace App\Livewire;
 
 use App\Filament\Schemas\VoterImportSchema;
-use App\Imports\VotersImport;
+use App\Jobs\ProcessVoterImport;
 use App\Models\Constituency;
 use App\Models\User;
+use App\Models\VoterImportBatch;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
-use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
 class VoterImportForm extends Component implements HasSchemas
@@ -62,39 +61,18 @@ class VoterImportForm extends Component implements HasSchemas
         }
 
         try {
-            $import = new VotersImport(
-                $constituencyId
-            );
-
-            Excel::import(
-                $import,
-                Storage::disk('local')->path($excelFile),
-            );
-
-            Storage::disk('local')->delete($excelFile);
+            $batch = VoterImportBatch::create(['constituency_id' => $constituencyId, 'user_id' => $user->id, 'file_name' => basename($excelFile), 'file_path' => $excelFile, 'status' => 'Queued']);
+            ProcessVoterImport::dispatch($excelFile, $constituencyId, $batch->id);
 
             $this->form->fill(
                 $this->defaultFormData($user)
             );
 
-            $message = "{$import->imported} voter record(s) imported successfully.";
-
-            if ($import->skipped > 0) {
-                $message .= " {$import->skipped} row(s) skipped.";
-            }
-
             Notification::make()
-                ->title('Voter import completed')
-                ->body($message)
+                ->title('Voter import queued')
+                ->body('The file will be processed in the background. Keep a queue worker running to complete the import.')
                 ->success()
                 ->send();
-
-            if (! empty($import->errors)) {
-                logger()->warning(
-                    'Voter Import Errors',
-                    $import->errors
-                );
-            }
         } catch (Throwable $exception) {
             report($exception);
 
@@ -154,8 +132,7 @@ class VoterImportForm extends Component implements HasSchemas
                 ->exists()
         ) {
             throw ValidationException::withMessages([
-                'data.constituency_id' =>
-                    'Please select a valid constituency.',
+                'data.constituency_id' => 'Please select a valid constituency.',
             ]);
         }
 

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -35,6 +35,8 @@ class RolePermissionSeeder extends Seeder
 
             'dashboard.view',
 
+            'constituency.view',
+
             'village.view',
             'village.create',
             'village.update',
@@ -62,6 +64,23 @@ class RolePermissionSeeder extends Seeder
 
             'report.view',
             'report.export',
+
+            'candidate.view',
+            'candidate.create',
+            'candidate.update',
+            'candidate.delete',
+            'candidate.approve',
+            'candidate_assessment.view',
+            'candidate_assessment.create',
+            'candidate_assessment.update',
+            'candidate_assessment.delete',
+
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
+            'campaign_task.delete',
+            'campaign_task.assign',
+            'campaign_task.review',
 
             'import.village',
             'import.booth',
@@ -93,6 +112,18 @@ class RolePermissionSeeder extends Seeder
 
             'report.view',
             'report.export',
+
+            'candidate.view',
+            'candidate.update',
+            'candidate_assessment.view',
+            'candidate_assessment.create',
+            'candidate_assessment.update',
+
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
+            'campaign_task.assign',
+            'campaign_task.review',
         ]);
 
         /*
@@ -117,6 +148,8 @@ class RolePermissionSeeder extends Seeder
             'import.booth',
             'import.house',
             'import.voter',
+
+            'campaign_task.view',
         ]);
 
         /*
@@ -138,6 +171,13 @@ class RolePermissionSeeder extends Seeder
             'house.view',
 
             'report.view',
+
+            'candidate.view',
+            'candidate_assessment.view',
+
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
         ]);
 
         /*
@@ -163,6 +203,10 @@ class RolePermissionSeeder extends Seeder
             'survey.view',
             'survey.create',
             'survey.update',
+
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
         ]);
 
         /*
@@ -186,6 +230,10 @@ class RolePermissionSeeder extends Seeder
             'survey.view',
             'survey.create',
             'survey.update',
+
+            'campaign_task.view',
+            'campaign_task.create',
+            'campaign_task.update',
         ]);
 
         /*
@@ -205,6 +253,9 @@ class RolePermissionSeeder extends Seeder
 
             'survey.view',
             'survey.create',
+
+            'campaign_task.view',
+            'campaign_task.update',
         ]);
 
         /*
@@ -221,6 +272,9 @@ class RolePermissionSeeder extends Seeder
 
             'survey.view',
             'survey.create',
+
+            'campaign_task.view',
+            'campaign_task.update',
         ]);
 
         /*
@@ -244,6 +298,8 @@ class RolePermissionSeeder extends Seeder
             'survey.view',
 
             'report.view',
+
+            'campaign_task.view',
         ]);
     }
 }
