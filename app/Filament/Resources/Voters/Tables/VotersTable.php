@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class VotersTable
 {
@@ -43,7 +44,19 @@ class VotersTable
 
                 TextColumn::make('house.display_name')
                     ->label('House')
-                    ->searchable()
+                    ->searchable(
+                        query: fn (Builder $query, string $search): Builder => $query
+                            ->whereHas(
+                                'house',
+                                fn (Builder $houseQuery): Builder => $houseQuery
+                                    ->where(function (Builder $houseSearchQuery) use ($search): void {
+                                        $houseSearchQuery
+                                            ->where('house_no', 'like', "%{$search}%")
+                                            ->orWhere('head_of_family', 'like', "%{$search}%")
+                                            ->orWhere('mobile', 'like', "%{$search}%");
+                                    }),
+                            ),
+                    )
                     ->toggleable(),
 
                 TextColumn::make('house.booth.village.name')
@@ -51,7 +64,7 @@ class VotersTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('booth.booth_no')
+                TextColumn::make('house.booth.booth_no')
                     ->label('Booth')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
