@@ -62,6 +62,10 @@ class AdminPanelProvider extends PanelProvider
                 fn (): View => view('filament.components.pwa-install-button'),
             )
             ->renderHook(
+                PanelsRenderHook::TOPBAR_AFTER,
+                fn (): View => view('filament.components.mobile-back-button'),
+            )
+            ->renderHook(
                 PanelsRenderHook::USER_MENU_BEFORE,
                 fn (): View => view('filament.components.theme-switcher'),
             )
