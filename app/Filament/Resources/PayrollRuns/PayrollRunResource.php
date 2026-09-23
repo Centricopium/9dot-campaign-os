@@ -49,7 +49,7 @@ class PayrollRunResource extends Resource
     {
         return $schema->components([Section::make('Payroll Period')->schema([
             Grid::make(3)->schema([
-                Select::make('constituency_id')->label('Assembly Constituency')->options(fn (): array => Constituency::query()->orderBy('name')->pluck('name', 'id')->all())->default(fn () => auth()->user()?->isAssemblyAdmin() ? auth()->user()?->constituency_id : null)->native(false)->required()->disabledOn('edit')->dehydrated(),
+                Select::make('constituency_id')->label('Assembly Constituency')->options(fn (): array => Constituency::query()->orderBy('name')->pluck('name', 'id')->all())->default(fn () => auth()->user()?->isConstituencyScoped() ? auth()->user()?->constituency_id : null)->native(false)->required()->disabledOn('edit')->dehydrated(),
                 Select::make('period_month')->options(collect(range(1, 12))->mapWithKeys(fn (int $month): array => [$month => now()->month($month)->format('F')])->all())->default(now()->month)->native(false)->required()->disabledOn('edit')->dehydrated(),
                 Select::make('period_year')->options(collect(range(now()->year - 2, now()->year + 1))->mapWithKeys(fn (int $year): array => [$year => $year])->all())->default(now()->year)->native(false)->required()->disabledOn('edit')->dehydrated(),
                 Select::make('status')->options(PayrollRun::STATUSES)->default('Draft')->native(false)->disabled()->dehydrated(),

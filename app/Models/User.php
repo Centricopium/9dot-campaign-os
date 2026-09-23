@@ -122,6 +122,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasRole('Assembly Admin');
     }
 
+    public function isConstituencyScoped(): bool
+    {
+        return ! $this->isSuperAdmin() && $this->hasAnyRole([
+            'Assembly Admin',
+            'HR Manager',
+            'Payroll Manager',
+            'HR Executive',
+        ]);
+    }
+
     public function isBoothUser(): bool
     {
         return ! is_null($this->booth_id);

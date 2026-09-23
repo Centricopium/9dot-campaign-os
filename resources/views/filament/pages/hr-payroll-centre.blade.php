@@ -61,7 +61,7 @@
                     @can('payroll.create')<a class="hr-button hr-button-ghost" href="{{ $this->createPayrollUrl() }}">Create Payroll</a>@endcan
                 </div>
             </div>
-            @if ($this->constituencies->count() > 1 && ! auth()->user()?->isAssemblyAdmin())
+            @if ($this->constituencies->count() > 1 && ! auth()->user()?->isConstituencyScoped())
                 <div class="hr-filter">
                     <label for="hr-constituency">Assembly Constituency</label>
                     <select id="hr-constituency" wire:model.live="constituencyId">

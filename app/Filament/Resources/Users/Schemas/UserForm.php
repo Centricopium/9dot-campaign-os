@@ -8,8 +8,8 @@ use App\Models\Role;
 use App\Models\Village;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -84,7 +84,7 @@ class UserForm
                                 ->pluck('name', 'id')
                                 ->all();
                         })
-                        ->native(true)
+                        ->native(false)
                         ->required(),
 
                 ]),

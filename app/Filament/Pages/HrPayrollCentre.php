@@ -43,7 +43,7 @@ class HrPayrollCentre extends Page
     {
         $user = auth()->user();
 
-        if ($user?->isAssemblyAdmin() && ! $user->isSuperAdmin() && $user->constituency_id) {
+        if ($user?->isConstituencyScoped() && $user->constituency_id) {
             $this->constituencyId = (string) $user->constituency_id;
         }
     }

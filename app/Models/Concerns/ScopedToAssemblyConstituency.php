@@ -36,7 +36,7 @@ trait ScopedToAssemblyConstituency
         static::addGlobalScope('assembly_constituency', function (Builder $query): void {
             $user = auth()->user();
 
-            if (! $user?->isAssemblyAdmin() || $user->isSuperAdmin()) {
+            if (! $user?->isConstituencyScoped()) {
                 return;
             }
 
@@ -52,7 +52,7 @@ trait ScopedToAssemblyConstituency
         static::saving(function (Model $model): void {
             $user = auth()->user();
 
-            if (! $user?->isAssemblyAdmin() || $user->isSuperAdmin()) {
+            if (! $user?->isConstituencyScoped()) {
                 return;
             }
 

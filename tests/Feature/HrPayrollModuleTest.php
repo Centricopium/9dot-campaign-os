@@ -10,6 +10,9 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Payroll\PayrollCalculationService;
+use Database\Seeders\HrPayrollPermissionsSeeder;
+use Database\Seeders\PermissionsSeeder;
+use Database\Seeders\RolesSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
@@ -161,5 +164,36 @@ class HrPayrollModuleTest extends TestCase
         $this->actingAs($user)->get('/admin/payroll-runs/create')->assertOk();
         $this->actingAs($user)->get(route('hr.payroll.payslip', $item))->assertOk()->assertHeader('content-type', 'application/pdf');
         $this->actingAs($user)->get(route('hr.payroll.register', $run))->assertOk()->assertHeader('content-type', 'application/pdf');
+    }
+
+    public function test_dedicated_hr_roles_receive_separated_permissions_and_constituency_scope(): void
+    {
+        $this->seed([RolesSeeder::class, PermissionsSeeder::class, HrPayrollPermissionsSeeder::class]);
+
+        $hrManager = Role::findByName('HR Manager');
+        $payrollManager = Role::findByName('Payroll Manager');
+        $hrExecutive = Role::findByName('HR Executive');
+
+        $this->assertTrue($hrManager->hasPermissionTo('hr_leave.approve'));
+        $this->assertTrue($hrManager->hasPermissionTo('payroll.process'));
+        $this->assertFalse($hrManager->hasPermissionTo('payroll.pay'));
+        $this->assertTrue($payrollManager->hasPermissionTo('payroll.approve'));
+        $this->assertTrue($payrollManager->hasPermissionTo('payroll.pay'));
+        $this->assertFalse($payrollManager->hasPermissionTo('hr_employee.update'));
+        $this->assertTrue($hrExecutive->hasPermissionTo('hr_attendance.create'));
+        $this->assertFalse($hrExecutive->hasPermissionTo('hr_leave.approve'));
+        $this->assertFalse($hrExecutive->hasPermissionTo('payroll.view'));
+
+        $first = Constituency::create(['name' => 'Scoped HR AC', 'state' => 'Gujarat']);
+        $second = Constituency::create(['name' => 'Outside HR AC', 'state' => 'Gujarat']);
+        Employee::create(['constituency_id' => $first->id, 'employee_code' => 'EMP-HR-1', 'name' => 'Scoped Employee', 'joining_date' => today()]);
+        Employee::create(['constituency_id' => $second->id, 'employee_code' => 'EMP-HR-2', 'name' => 'Outside Employee', 'joining_date' => today()]);
+        $user = User::factory()->create(['constituency_id' => $first->id, 'is_active' => true]);
+        $user->assignRole('HR Manager');
+
+        $this->actingAs($user);
+
+        $this->assertSame(['Scoped Employee'], Employee::query()->pluck('name')->all());
+        $this->assertSame(['Scoped HR AC'], Constituency::query()->pluck('name')->all());
     }
 }

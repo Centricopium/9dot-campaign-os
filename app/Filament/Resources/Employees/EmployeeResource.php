@@ -52,11 +52,11 @@ class EmployeeResource extends Resource
         return $schema->components([
             Section::make('Employee Profile')->schema([
                 Grid::make(3)->schema([
-                    Select::make('constituency_id')->label('Assembly Constituency')->options(fn (): array => Constituency::query()->orderBy('name')->pluck('name', 'id')->all())->default(fn () => auth()->user()?->isAssemblyAdmin() ? auth()->user()?->constituency_id : null)->native(false)->required(),
+                    Select::make('constituency_id')->label('Assembly Constituency')->options(fn (): array => Constituency::query()->orderBy('name')->pluck('name', 'id')->all())->default(fn () => auth()->user()?->isConstituencyScoped() ? auth()->user()?->constituency_id : null)->native(false)->required(),
                     TextInput::make('employee_code')->maxLength(40)->unique(ignoreRecord: true)->placeholder('Auto-generated if blank'),
                     Select::make('user_id')->label('Linked Login User')->options(fn (): array => User::query()
                         ->where('is_active', true)
-                        ->when(auth()->user()?->isAssemblyAdmin() && ! auth()->user()?->isSuperAdmin(), fn ($query) => $query->where('constituency_id', auth()->user()?->constituency_id))
+                        ->when(auth()->user()?->isConstituencyScoped(), fn ($query) => $query->where('constituency_id', auth()->user()?->constituency_id))
                         ->orderBy('name')
                         ->pluck('name', 'id')
                         ->all())->searchable()->native(false)->unique(ignoreRecord: true),
