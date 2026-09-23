@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -98,6 +99,11 @@ class User extends Authenticatable implements FilamentUser
     public function sentInternalMessages(): HasMany
     {
         return $this->hasMany(InternalMessage::class, 'sender_id');
+    }
+
+    public function employeeProfile(): HasOne
+    {
+        return $this->hasOne(Employee::class);
     }
 
     /*

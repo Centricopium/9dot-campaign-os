@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             CampaignFinancePermissionsSeeder::class,
             CampaignCommunicationPermissionsSeeder::class,
             InternalMessagePermissionsSeeder::class,
+            HrPayrollPermissionsSeeder::class,
 
             SuperAdminSeeder::class,
 

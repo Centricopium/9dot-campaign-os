@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AssemblyBoothOrganisationExportController;
 use App\Http\Controllers\InternalMessageAttachmentController;
+use App\Http\Controllers\PayrollPayslipController;
+use App\Http\Controllers\PayrollRegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,3 +34,11 @@ Route::get(
 Route::get('/internal-messages/{message}/attachment', InternalMessageAttachmentController::class)
     ->middleware('auth')
     ->name('internal-messages.attachment');
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/hr/payroll-items/{payrollItem}/payslip', PayrollPayslipController::class)
+        ->name('hr.payroll.payslip');
+
+    Route::get('/hr/payroll-runs/{payrollRun}/register', PayrollRegisterController::class)
+        ->name('hr.payroll.register');
+});

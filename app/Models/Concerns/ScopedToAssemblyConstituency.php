@@ -13,7 +13,12 @@ use App\Models\CampaignTask;
 use App\Models\Candidate;
 use App\Models\CandidateAssessment;
 use App\Models\Constituency;
+use App\Models\Employee;
+use App\Models\EmployeeAttendance;
+use App\Models\EmployeeLeave;
 use App\Models\House;
+use App\Models\PayrollItem;
+use App\Models\PayrollRun;
 use App\Models\SecurityAuditLog;
 use App\Models\SurveyAnswer;
 use App\Models\SurveyResponse;
@@ -74,6 +79,11 @@ trait ScopedToAssemblyConstituency
             CampaignBudget::class => $query->where('constituency_id', $constituencyId),
             CampaignCommunication::class => $query->where('constituency_id', $constituencyId),
             CampaignExpense::class => $query->where('constituency_id', $constituencyId),
+            Employee::class => $query->where('constituency_id', $constituencyId),
+            EmployeeAttendance::class => $query->whereHas('employee', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
+            EmployeeLeave::class => $query->whereHas('employee', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
+            PayrollRun::class => $query->where('constituency_id', $constituencyId),
+            PayrollItem::class => $query->whereHas('payrollRun', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
             House::class => $query->whereHas('booth.village', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
             Voter::class => $query->whereHas('house.booth.village', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
             SurveyResponse::class => $query->whereHas('house.booth.village', fn (Builder $q) => $q->where('constituency_id', $constituencyId)),
@@ -99,6 +109,11 @@ trait ScopedToAssemblyConstituency
             CampaignBudget::class => (int) $model->constituency_id === $constituencyId,
             CampaignCommunication::class => (int) $model->constituency_id === $constituencyId,
             CampaignExpense::class => (int) $model->constituency_id === $constituencyId,
+            Employee::class => (int) $model->constituency_id === $constituencyId,
+            EmployeeAttendance::class => Employee::query()->whereKey($model->employee_id)->where('constituency_id', $constituencyId)->exists(),
+            EmployeeLeave::class => Employee::query()->whereKey($model->employee_id)->where('constituency_id', $constituencyId)->exists(),
+            PayrollRun::class => (int) $model->constituency_id === $constituencyId,
+            PayrollItem::class => PayrollRun::query()->whereKey($model->payroll_run_id)->where('constituency_id', $constituencyId)->exists(),
             House::class => Booth::query()->whereKey($model->booth_id)->exists(),
             Voter::class => House::query()->whereKey($model->house_id)->exists(),
             SurveyResponse::class => House::query()->whereKey($model->house_id)->exists(),
