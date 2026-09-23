@@ -149,6 +149,23 @@ body.fi-body {
     backdrop-filter: blur(12px);
 }
 
+/*
+ * Glassmorphism creates a stacking context for every section. Lift only the
+ * section whose custom select is open so its dropdown is not covered by the
+ * next card in multi-section forms (for example Role & Access above Status).
+ */
+.fi-section {
+    position: relative;
+}
+
+.fi-section:has(.fi-select-input-btn[aria-expanded='true']) {
+    z-index: 30;
+}
+
+.fi-section:has(.fi-select-input-btn[aria-expanded='true']) .fi-dropdown-panel {
+    z-index: 40;
+}
+
 .fi-section,
 .fi-ta-ctn,
 .fi-wi-stats-overview-stat,
