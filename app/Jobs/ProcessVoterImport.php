@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Throwable;
 
 class ProcessVoterImport implements ShouldQueue
@@ -39,24 +40,65 @@ class ProcessVoterImport implements ShouldQueue
             throw new \RuntimeException('The uploaded voter import file is no longer available.');
         }
 
+        $sourcePath = $this->prepareQueueSource($batch);
+
         if ($batch) {
             $batch->update(['status' => 'Processing', 'started_at' => $batch->started_at ?: now(), 'failure_message' => null]);
             if (! $batch->total_rows) {
-                $info = IOFactory::createReaderForFile(Storage::disk('local')->path($this->path))->listWorksheetInfo(Storage::disk('local')->path($this->path));
+                $sourceFile = Storage::disk('local')->path($sourcePath);
+                $info = IOFactory::createReaderForFile($sourceFile)->listWorksheetInfo($sourceFile);
                 $batch->update(['total_rows' => max(0, (int) ($info[0]['totalRows'] ?? 1) - 1)]);
             }
         }
 
-        $import = new VotersImport($this->constituencyId, $this->path, $this->batchId);
+        $import = new VotersImport($this->constituencyId, $sourcePath, $this->batchId);
 
-        Excel::queueImport($import, Storage::disk('local')->path($this->path));
+        Excel::queueImport($import, Storage::disk('local')->path($sourcePath));
 
         Log::info('Voter import completed.', [
             'constituency_id' => $this->constituencyId,
-            'file' => $this->path,
+            'file' => $sourcePath,
             'mode' => 'queued_chunks',
             'chunk_size' => $import->chunkSize(),
         ]);
+    }
+
+    /**
+     * CSV files are streamed by the reader and are substantially more reliable
+     * than repeatedly reading a large XLSX workbook on shared hosting.
+     */
+    private function prepareQueueSource(?VoterImportBatch $batch): string
+    {
+        if (strtolower(pathinfo($this->path, PATHINFO_EXTENSION)) !== 'xlsx') {
+            return $this->path;
+        }
+
+        $csvPath = preg_replace('/\\.xlsx$/i', '.csv', $this->path);
+        $disk = Storage::disk('local');
+
+        if (! $disk->exists($csvPath)) {
+            $sourceFile = $disk->path($this->path);
+            $csvFile = $disk->path($csvPath);
+            $reader = IOFactory::createReaderForFile($sourceFile);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($sourceFile);
+
+            $writer = new Csv($spreadsheet);
+            $writer->setDelimiter(',');
+            $writer->setEnclosure('"');
+            $writer->setUseBOM(true);
+            $writer->save($csvFile);
+            $spreadsheet->disconnectWorksheets();
+        }
+
+        if ($batch) {
+            $batch->update([
+                'file_name' => basename($csvPath),
+                'file_path' => $csvPath,
+            ]);
+        }
+
+        return $csvPath;
     }
 
     public function failed(Throwable $exception): void
