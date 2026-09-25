@@ -11,7 +11,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Throwable;
@@ -51,15 +50,13 @@ class ProcessVoterImport implements ShouldQueue
             }
         }
 
-        $import = new VotersImport($this->constituencyId, $sourcePath, $this->batchId);
-
-        Excel::queueImport($import, Storage::disk('local')->path($sourcePath));
+        CsvVoterImportChunk::dispatch($sourcePath, $this->constituencyId, $this->batchId);
 
         Log::info('Voter import completed.', [
             'constituency_id' => $this->constituencyId,
             'file' => $sourcePath,
-            'mode' => 'queued_chunks',
-            'chunk_size' => $import->chunkSize(),
+            'mode' => 'resumable_csv_chunks',
+            'chunk_size' => CsvVoterImportChunk::CHUNK_SIZE,
         ]);
     }
 
